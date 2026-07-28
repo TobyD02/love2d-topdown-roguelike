@@ -1,0 +1,6 @@
+{
+  "runtime.version": "LuaJIT",
+  "diagnostics.globals": ["love"],
+  "workspace.library": ["./lib", "~/.local/share/love2d-library"],
+  "workspace.checkThirdParty": false
+}
