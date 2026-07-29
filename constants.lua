@@ -16,6 +16,8 @@ local Constants = {
 	TYPE_BULLET = "bullet",
 	TYPE_PLAYER = "player",
 	TYPE_WALL = "wall",
+
+	DEBUG = true,
 }
 
 return Constants

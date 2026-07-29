@@ -3,10 +3,6 @@ local Constants = require("constants")
 
 ---@class GEntity : GPhysicsObject
 ---@field world GWorld
----@field x number
----@field y number
----@field width number
----@field height number
 ---@field moveTargetX number
 ---@field moveTargetY number
 ---@field queuedForDelete boolean
@@ -27,7 +23,7 @@ setmetatable(GEntity, { __index = GPhysicsObject })
 ---@param type string
 ---@return TEntity
 function GEntity:new(x, y, width, height, type)
-	local obj = GPhysicsObject.new(self, type)
+	local obj = GPhysicsObject.new(self, type, x, y, width, height)
 	obj.world = nil
 	obj.x = x
 	obj.y = y
@@ -69,7 +65,7 @@ end
 
 ---@param self GEntity
 function GEntity:draw()
-	-- Do nothing
+	GPhysicsObject.draw(self) -- Call parent draw
 end
 
 ---@param self GEntity

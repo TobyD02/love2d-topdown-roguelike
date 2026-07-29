@@ -1,3 +1,5 @@
+local Constants = require("constants")
+
 ---@class GWorld
 ---@field cellSize number
 ---@field width number
@@ -124,13 +126,23 @@ function GWorld:update(dt)
 end
 
 function GWorld:draw()
-	love.graphics.setColor(0.4, 0.4, 0.4)
 	for _, wall in ipairs(self.walls) do
-		love.graphics.rectangle("fill", wall.x, wall.y, wall.width, wall.height)
+		wall:draw()
 	end
 
 	for _, entity in ipairs(self.entities) do
 		entity:draw()
+	end
+
+	if Constants.DEBUG then
+		for _, wall in ipairs(self.walls) do
+			wall:drawDebug()
+		end
+
+		for _, entity in ipairs(self.entities) do
+			entity:drawDebug()
+		end
+		
 	end
 end
 

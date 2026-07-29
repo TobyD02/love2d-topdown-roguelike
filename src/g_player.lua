@@ -114,6 +114,8 @@ end
 
 ---@param self GPlayer
 function GPlayer:draw()
+	GEntity.draw(self) -- Call parent draw function first
+
 	love.graphics.setColor(0.9, 0.3, 0.3)
 	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end

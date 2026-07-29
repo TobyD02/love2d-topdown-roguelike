@@ -70,6 +70,8 @@ end
 
 ---@param self GBullet
 function GBullet:draw()
+	GEntity.draw(self) -- Call parent draw function first
+
 	love.graphics.setColor(0.6, 0.6, 0.2)
 	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
