@@ -27,7 +27,7 @@ function GPlayer:new(x, y)
 	obj.speed = 200
 
 	obj.canShoot = true
-	obj.maxShootTimer = 0.1
+	obj.maxShootTimer = 0.02
 	obj.shootTimer = obj.maxShootTimer
 	obj.lastDirX = 1 -- Start with dir x as 1 so that it is normalized
 	obj.lastDirY = 0
@@ -72,16 +72,18 @@ function GPlayer:update(dt)
 		end
 
 		-- self.world:addEntity(GBullet:new(self, self.x, self.y, bulletDirX, bulletDirY))
-		self.world:addEntity(GBullet:new(self, self.x, self.y, 1, 0))
-		self.world:addEntity(GBullet:new(self, self.x, self.y, 1, 1))
-		self.world:addEntity(GBullet:new(self, self.x, self.y, 1, -1))
+		oX, oY = self:getOrigin()
 
-		self.world:addEntity(GBullet:new(self, self.x, self.y, -1, 0))
-		self.world:addEntity(GBullet:new(self, self.x, self.y, -1, 1))
-		self.world:addEntity(GBullet:new(self, self.x, self.y, -1, -1))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 1, 0))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 1, 1))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 1, -1))
 
-		self.world:addEntity(GBullet:new(self, self.x, self.y, 0, 1))
-		self.world:addEntity(GBullet:new(self, self.x, self.y, 0, -1))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, -1, 0))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, -1, 1))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, -1, -1))
+
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 0, 1))
+		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 0, -1))
 		self.canShoot = false
 	end
 

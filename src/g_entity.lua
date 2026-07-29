@@ -10,6 +10,8 @@ local Constants = require("constants")
 ---@field moveTargetX number
 ---@field moveTargetY number
 ---@field queuedForDelete boolean
+---@field originX number
+---@field originY number
 
 local GEntity = {}
 GEntity.__index = GEntity
@@ -49,6 +51,13 @@ end
 ---@return string
 function GEntity:filter()
 	return Constants.FILTER_SLIDE
+end
+
+---@param self GEntity
+---@return originX number
+---@return originY number
+function GEntity:getOrigin()
+	return self.x + (self.width / 2), self.y + (self.height / 2)
 end
 
 ---@param dt number
