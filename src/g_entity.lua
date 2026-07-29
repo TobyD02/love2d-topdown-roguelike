@@ -1,5 +1,7 @@
 local GPhysicsObject = require("src.g_physics_object")
-local Constants = require("constants")
+local Constants = require("src.constants")
+local Helpers = require("src.helpers")
+local Tags = require("src.tags")
 
 ---@class GEntity : GPhysicsObject
 ---@field world GWorld
@@ -20,10 +22,12 @@ setmetatable(GEntity, { __index = GPhysicsObject })
 ---@param y number
 ---@param width number
 ---@param height number
----@param type string
 ---@return TEntity
-function GEntity:new(x, y, width, height, type)
-	local obj = GPhysicsObject.new(self, type, x, y, width, height)
+function GEntity:new(x, y, width, height)
+	---@type GEntity
+	local obj = GPhysicsObject.new(self, x, y, width, height)
+	obj:addTag(Tags.ENTITY)
+
 	obj.world = nil
 	obj.x = x
 	obj.y = y
@@ -45,8 +49,13 @@ function GEntity:move(directionX, directionY)
 end
 
 ---@param self GEntity
+---@param other GPhysicsObject
 ---@return string
-function GEntity:filter()
+--- Accepts GPhysicsObject other, and returns one of:
+---		- Constants.FILTER_SLIDE = Collide and move other
+---		- Constants.FILTER_TOUCH = Collide but dont move other
+---		- Constants.FILTER_CROSS = Pass through
+function GEntity:filter(other)
 	return Constants.FILTER_SLIDE
 end
 

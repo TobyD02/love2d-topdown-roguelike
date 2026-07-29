@@ -1,6 +1,7 @@
 local GEntity = require("src.g_entity")
-local Constants = require("constants")
+local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
+local Tags = require("src.tags")
 
 ---@class GPlayer : GEntity
 ---@field health number
@@ -23,7 +24,10 @@ setmetatable(GPlayer, { __index = GEntity })
 ---@param shooter GShooter|nil
 ---@return TPlayer
 function GPlayer:new(x, y, shooter)
-	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, Constants.TYPE_PLAYER)
+	---@type GPlayer
+	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, tags)
+	obj:addTag(Tags.PLAYER)
+
 	obj.health = 100
 	obj.speed = 200
 
@@ -102,7 +106,7 @@ end
 
 ---@param other GPhysicsObject
 function GPlayer:filter(other)
-	if other.type == Constants.TYPE_BULLET then
+	if other:hasTag(Tags.BULLET) then
 		return Constants.FILTER_CROSS
 	else
 		return Constants.FILTER_SLIDE

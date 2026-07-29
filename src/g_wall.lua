@@ -1,5 +1,5 @@
 local GPhysicsObject = require("src.g_physics_object")
-local Constants = require("constants")
+local Tags = require("src.tags")
 
 ---@class GWall : GPhysicsObject
 local GWall = {}
@@ -14,7 +14,10 @@ setmetatable(GWall, { __index = GPhysicsObject })
 ---@param height number
 ---@return TWall
 function GWall:new(x, y, width, height)
-	local obj = GPhysicsObject.new(self, Constants.TYPE_WALL, x, y, width, height)
+	---@type GWall
+	local obj = GPhysicsObject.new(self, x, y, width, height)
+
+	obj:addTag(Tags.WALL)
 	obj.x = x
 	obj.y = y
 	obj.width = width

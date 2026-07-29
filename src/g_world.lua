@@ -1,4 +1,6 @@
-local Constants = require("constants")
+local Constants = require("src.constants")
+local Tags = require("src.tags")
+local Helpers = require("src.helpers")
 
 ---@class GWorld
 ---@field cellSize number
@@ -7,6 +9,7 @@ local Constants = require("constants")
 ---@field entities GEntity[]
 ---@field entityIndexMap table<GEntity, number>
 ---@field entityRemoveQueue GEntity[]
+---@field entityTagsMap table<string, GEntity>
 ---@field walls GWall[]
 ---@field bumpWorld bump.World
 local GWorld = {}
@@ -16,6 +19,12 @@ GWorld.__index = GWorld
 ---@param height number
 ---@param cellSize number
 function GWorld:new(width, height, cellSize)
+
+	local entityTagsMap = {}
+	for _, tag in pairs(Tags) do
+		entityTagsMap[tag] = {}
+	end
+
 	local obj = {
 		cellSize = cellSize,
 		width = width,
@@ -24,6 +33,7 @@ function GWorld:new(width, height, cellSize)
 		entities = {},
 		entityIndexMap = {},
 		entityRemoveQueue = {},
+		entityTagsMap = entityTagsMap,
 		bumpWorld = require("lib.bump.bump").newWorld(cellSize),
 	}
 
@@ -55,6 +65,14 @@ function GWorld:addEntity(entity)
 	table.insert(self.entities, entity)
 	self.entityIndexMap[entity] = #self.entities
 
+	for _, tag in pairs(Tags) do
+		if entity:hasTag(tag) then
+			table.insert(self.entityTagsMap[tag], entity)
+		end
+	end
+
+	--Helpers:printTable(self.entityTagsMap)
+
 	self.bumpWorld:add(entity, entity.x, entity.y, entity.width, entity.height)
 end
 
@@ -70,6 +88,9 @@ end
 
 function GWorld:processEntityRemoveQueue()
 	for _, entity in ipairs(self.entityRemoveQueue) do
+
+		self:removeEntityFromTagMap(entity)
+
 		local index = self.entityIndexMap[entity]
 
 		if index then
@@ -87,6 +108,37 @@ function GWorld:processEntityRemoveQueue()
 	end
 
 	self.entityRemoveQueue = {}
+end
+
+---@param self GWorld
+---@param entity GEntity
+function GWorld:removeEntityFromTagMap(entity)
+	for _, tag in pairs(Tags) do
+		if entity:hasTag(tag) then
+			local entities = self.entityTagsMap[tag]
+
+			if entities then
+				for i, taggedEntity in ipairs(entities) do
+					if taggedEntity == entity then
+						table.remove(entities, i)
+						break
+					end
+				end
+			end
+		end
+	end
+end
+
+---@param self GWorld
+---@param tag string
+---@return GEntity[]
+function GWorld:getEntitiesByTag(tag)
+	local entities = self.entityTagsMap[tag]
+	if entities == nil then
+		return {}
+	end
+
+	return entities
 end
 
 ---@param self GWorld

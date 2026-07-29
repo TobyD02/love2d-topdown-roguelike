@@ -1,5 +1,6 @@
 local GEntity = require("src.g_entity")
-local Constants = require("constants")
+local Constants = require("src.constants")
+local Tags = require("src.tags")
 
 ---@class GBullet : GEntity
 ---@field owner GEntity
@@ -21,7 +22,9 @@ setmetatable(GBullet, { __index = GEntity })
 ---@param dirY number
 ---@return TBullet
 function GBullet:new(owner, x, y, dirX, dirY)
-	local obj = GEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE, Constants.TYPE_BULLET)
+	---@type GBullet
+	local obj = GEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE)
+	obj:addTag(Tags.BULLET)
 
 	obj.speed = 1000
 	obj.owner = owner
@@ -47,6 +50,7 @@ function GBullet:newFromOrigin(owner, originX, originY, dirX, dirY)
 	return obj
 end
 
+---@param self GBullet
 ---@param other GPhysicsObject
 function GBullet:filter(other)
 	return Constants.FILTER_CROSS
@@ -54,7 +58,7 @@ end
 
 ---@param other GPhysicsObject
 function GBullet:onCollision(other)
-	if other.type == self.owner.type or other.type == Constants.TYPE_BULLET then
+	if other == self.owner or other:hasTag(Tags.BULLET) then
 		return
 	end
 
