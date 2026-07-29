@@ -23,7 +23,7 @@ setmetatable(GBullet, { __index = GEntity })
 function GBullet:new(owner, x, y, dirX, dirY)
 	local obj = GEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE, Constants.TYPE_BULLET)
 
-	obj.speed = 500
+	obj.speed = 1000
 	obj.owner = owner
 
 	-- Normalize direction
@@ -43,7 +43,7 @@ function GBullet:newFromOrigin(owner, originX, originY, dirX, dirY)
 	local x = originX - Constants.BULLET_SIZE / 2
 	local y = originY - Constants.BULLET_SIZE / 2
 
-	obj = GBullet.new(self, owner, x, y, dirX, dirY)
+	local obj = GBullet.new(self, owner, x, y, dirX, dirY)
 	return obj
 end
 

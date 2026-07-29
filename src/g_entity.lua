@@ -74,4 +74,10 @@ function GEntity:onCollision(other)
 	-- Do nothing
 end
 
+---@param self GEntity
+---@param world GWorld
+function GEntity:setWorld(world)
+	self.world = world
+end
+
 return GEntity

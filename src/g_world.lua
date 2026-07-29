@@ -50,7 +50,7 @@ end
 ---@param self GWorld
 ---@param entity GEntity
 function GWorld:addEntity(entity)
-	entity.world = self
+	entity:setWorld(self)
 
 	table.insert(self.entities, entity)
 	self.entityIndexMap[entity] = #self.entities

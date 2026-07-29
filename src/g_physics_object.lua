@@ -1,5 +1,3 @@
-local Constants = require("constants")
-
 ---@class GPhysicsObject
 ---@field type string
 ---@field x number

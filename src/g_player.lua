@@ -1,6 +1,6 @@
 local GEntity = require("src.g_entity")
-local GBullet = require("src.g_bullet")
 local Constants = require("constants")
+local GShooter = require("src.shooters.g_shooter")
 
 ---@class GPlayer : GEntity
 ---@field health number
@@ -10,6 +10,7 @@ local Constants = require("constants")
 ---@field maxShootTimer number
 ---@field lastDirX number
 ---@field lastDirY number
+---@field shooter GShooter
 local GPlayer = {}
 GPlayer.__index = GPlayer
 
@@ -19,14 +20,20 @@ setmetatable(GPlayer, { __index = GEntity })
 ---@generic TPlayer
 ---@param x number
 ---@param y number
+---@param shooter GShooter|nil
 ---@return TPlayer
-function GPlayer:new(x, y)
+function GPlayer:new(x, y, shooter)
 	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, Constants.TYPE_PLAYER)
 	obj.health = 100
 	obj.speed = 200
 
+	if shooter == nil then
+		shooter = GShooter:new(obj)
+	end
+
+	obj.shooter = shooter
 	obj.canShoot = true
-	obj.maxShootTimer = 0.02
+	obj.maxShootTimer = 0.1
 	obj.shootTimer = obj.maxShootTimer
 	obj.lastDirX = 1 -- Start with dir x as 1 so that it is normalized
 	obj.lastDirY = 0
@@ -71,18 +78,8 @@ function GPlayer:update(dt)
 		end
 
 		-- self.world:addEntity(GBullet:new(self, self.x, self.y, bulletDirX, bulletDirY))
-		oX, oY = self:getOrigin()
-
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 1, 0))
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 1, 1))
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 1, -1))
-
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, -1, 0))
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, -1, 1))
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, -1, -1))
-
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 0, 1))
-		self.world:addEntity(GBullet:newFromOrigin(self, oX, oY, 0, -1))
+		local oX, oY = self:getOrigin()
+		self.shooter:shoot(oX, oY, bulletDirX, bulletDirY)
 		self.canShoot = false
 	end
 
@@ -118,6 +115,11 @@ function GPlayer:draw()
 
 	love.graphics.setColor(0.9, 0.3, 0.3)
 	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+end
+
+function GPlayer:setWorld(world)
+	GEntity.setWorld(self, world)
+	self.shooter:setWorld(world)
 end
 
 return GPlayer
