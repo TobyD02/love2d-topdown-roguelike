@@ -1,5 +1,3 @@
-local GEntity = require("src.g_entity")
-
 ---@class GWorld
 ---@field cellSize number
 ---@field width number
