@@ -23,9 +23,8 @@ setmetatable(GEnemy, { __index = GEntity })
 ---@generic TEnemy
 ---@param x number
 ---@param y number
----@param shooter GShooter|nil
 ---@return TEnemy
-function GEnemy:new(x, y, shooter)
+function GEnemy:new(x, y)
 	---@type GEnemy
 	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
 	obj:addTag(Tags.ENEMY)
@@ -33,11 +32,7 @@ function GEnemy:new(x, y, shooter)
 	obj.health = 100
 	obj.speed = 100
 
-	if shooter == nil then
-		shooter = GShooter:new(obj)
-	end
-
-	obj.shooter = shooter
+	obj.shooter = GShooter:new(obj)
 	obj.canShoot = true
 	obj.maxShootTimer = 0.1
 	obj.shootTimer = obj.maxShootTimer
@@ -52,24 +47,14 @@ end
 ---@param self GEnemy
 ---@param dt number
 function GEnemy:update(dt)
+	self.shooter:update(dt)
+
 	if self.target == nil then
 		local players = self.world:getEntitiesByTag(Tags.PLAYER)
 		if #players > 0 then
 			self.target = players[1]
 		end
 	end
-
-	if self.target ~= nil then
-		local dirX = self.target.x - self.x
-		local dirY = self.target.y - self.y
-
-		dirX, dirY = Helpers:normalize(dirX, dirY)
-
-		self.moveTargetX = self.x + (dirX + self.separationX) * self.speed * dt
-		self.moveTargetY = self.y + (dirY + self.separationY) * self.speed * dt
-	end
-
-	self.separationX, self.separationY = 0, 0
 end
 
 ---@param self GEnemy
@@ -78,6 +63,15 @@ function GEnemy:filter(other)
 	if other:hasTag(Tags.ENEMY) then
 		return Constants.FILTER_CROSS
 	end
+
+	if other:hasTag(Tags.BULLET) then
+		---@type GBullet
+		local b = other
+		if b.owner == self then
+			return Constants.FILTER_CROSS
+		end
+	end
+
 	return Constants.FILTER_SLIDE
 end
 
@@ -90,6 +84,13 @@ function GEnemy:onCollision(other)
 
 		self.separationX, self.separationY = Helpers:normalize(sepX, sepY)
 	end
+end
+
+---@param self GEnemy
+---@param world GWorld
+function GEnemy:setWorld(world)
+	self.world = world
+	self.shooter:setWorld(world)
 end
 
 return GEnemy

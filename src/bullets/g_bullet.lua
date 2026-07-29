@@ -1,12 +1,16 @@
 local GEntity = require("src.g_entity")
 local Constants = require("src.constants")
 local Tags = require("src.tags")
+local Helpers = require("src.helpers")
 
 ---@class GBullet : GEntity
 ---@field owner GEntity
 ---@field speed number
 ---@field dirX number
 ---@field dirY number
+---@field range number
+---@field startX number
+---@field startY number
 local GBullet = {}
 GBullet.__index = GBullet
 
@@ -20,14 +24,24 @@ setmetatable(GBullet, { __index = GEntity })
 ---@param y number
 ---@param dirX number
 ---@param dirY number
+---@param range number
 ---@return TBullet
-function GBullet:new(owner, x, y, dirX, dirY)
+function GBullet:new(owner, x, y, dirX, dirY, range)
 	---@type GBullet
 	local obj = GEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE)
 	obj:addTag(Tags.BULLET)
 
+	obj.startX = x
+	obj.startY = y
+
 	obj.speed = 1000
 	obj.owner = owner
+
+	if range == nil then
+		range = 100
+	end
+
+	obj.range = range
 
 	-- Normalize direction
 	if dirX ~= 0 or dirY ~= 0 then
@@ -42,11 +56,18 @@ function GBullet:new(owner, x, y, dirX, dirY)
 	return obj
 end
 
-function GBullet:newFromOrigin(owner, originX, originY, dirX, dirY)
+---@param self GBullet
+---@param owner GEntity
+---@param originX number
+---@param originY number
+---@param dirX number
+---@param dirY number
+---@param range number
+function GBullet:newFromOrigin(owner, originX, originY, dirX, dirY, range)
 	local x = originX - Constants.BULLET_SIZE / 2
 	local y = originY - Constants.BULLET_SIZE / 2
 
-	local obj = GBullet.new(self, owner, x, y, dirX, dirY)
+	local obj = GBullet.new(self, owner, x, y, dirX, dirY, range)
 	return obj
 end
 
@@ -68,6 +89,12 @@ end
 ---@param self GBullet
 ---@param dt number
 function GBullet:update(dt)
+	local distance = Helpers:distance(self.startX, self.startY, self.x, self.y)
+	if distance >= self.range then
+		self.world:removeEntity(self)
+		return
+	end
+
 	self.moveTargetX = self.x + self.dirX * self.speed * dt
 	self.moveTargetY = self.y + self.dirY * self.speed * dt
 end

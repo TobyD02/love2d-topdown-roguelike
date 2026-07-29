@@ -2,6 +2,7 @@ local GEntity = require("src.g_entity")
 local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
 local Tags = require("src.tags")
+local Helpers = require("src.helpers")
 
 ---@class GPlayer : GEntity
 ---@field health number
@@ -25,7 +26,7 @@ setmetatable(GPlayer, { __index = GEntity })
 ---@return TPlayer
 function GPlayer:new(x, y, shooter)
 	---@type GPlayer
-	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, tags)
+	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
 	obj:addTag(Tags.PLAYER)
 
 	obj.health = 100
@@ -47,6 +48,8 @@ end
 ---@param self GPlayer
 ---@param dt number
 function GPlayer:update(dt)
+	self.shooter:update(dt)
+
 	local dirX, dirY = 0, 0
 
 	if love.keyboard.isDown("w") then
@@ -66,16 +69,9 @@ function GPlayer:update(dt)
 	end
 
 	-- Normalize diagonal movement
-	local dirNotZero = false
-	if dirX ~= 0 or dirY ~= 0 then
-		dirNotZero = true
+	dirX, dirY = Helpers:normalize(dirX, dirY)
 
-		local len = math.sqrt(dirX * dirX + dirY * dirY)
-		dirX = dirX / len
-		dirY = dirY / len
-	end
-
-	if love.keyboard.isDown("space") and self.canShoot then
+	if love.keyboard.isDown("space") then
 		local bulletDirX, bulletDirY = dirX, dirY
 		if dirX == 0 and dirY == 0 then
 			bulletDirX, bulletDirY = self.lastDirX, self.lastDirY
@@ -84,26 +80,13 @@ function GPlayer:update(dt)
 		-- self.world:addEntity(GBullet:new(self, self.x, self.y, bulletDirX, bulletDirY))
 		local oX, oY = self:getOrigin()
 		self.shooter:shoot(oX, oY, bulletDirX, bulletDirY)
-		self.canShoot = false
-	end
-
-	if not self.canShoot then
-		self.shootTimer = self.shootTimer - dt
-		if self.shootTimer <= 0 then
-			self.canShoot = true
-			self.shootTimer = self.maxShootTimer
-		end
 	end
 
 	self.moveTargetX = self.x + dirX * self.speed * dt
 	self.moveTargetY = self.y + dirY * self.speed * dt
-
-	if dirNotZero then
-		self.lastDirX = dirX
-		self.lastDirY = dirY
-	end
 end
 
+---@param self GPlayer
 ---@param other GPhysicsObject
 function GPlayer:filter(other)
 	if other:hasTag(Tags.BULLET) then
@@ -111,6 +94,16 @@ function GPlayer:filter(other)
 	else
 		return Constants.FILTER_SLIDE
 	end
+end
+
+---@param self GPlayer
+---@param other GPhysicsObject
+function GPlayer:onCollision(other)
+	if other:hasTag(Tags.ENEMY) then
+		return Constants.FILTER_TOUCH
+	end
+
+	return Constants.FILTER_SLIDE
 end
 
 ---@param self GPlayer

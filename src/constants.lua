@@ -2,7 +2,7 @@ local Constants = {
 
 	CELL_SIZE = 64,
 	PLAYER_SIZE = 32,
-	BULLET_SIZE = 16,
+	BULLET_SIZE = 24,
 
 	---Normal collision filter
 	FILTER_SLIDE = "slide",
