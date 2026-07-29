@@ -1,3 +1,4 @@
+---@class Helpers
 local Helpers = {}
 Helpers.__index = Helpers
 
