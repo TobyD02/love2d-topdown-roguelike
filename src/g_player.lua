@@ -8,6 +8,8 @@ local Constants = require("constants")
 ---@field canShoot boolean
 ---@field shootTimer number
 ---@field maxShootTimer number
+---@field lastDirX number
+---@field lastDirY number
 local GPlayer = {}
 GPlayer.__index = GPlayer
 
@@ -23,41 +25,63 @@ function GPlayer:new(x, y)
 	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, Constants.TYPE_PLAYER)
 	obj.health = 100
 	obj.speed = 200
+
 	obj.canShoot = true
-	obj.shootTimer, obj.maxShootTimer = 0.5, 0.5
+	obj.maxShootTimer = 0.1
+	obj.shootTimer = obj.maxShootTimer
+	obj.lastDirX = 1 -- Start with dir x as 1 so that it is normalized
+	obj.lastDirY = 0
 	return obj
 end
 
 ---@param self GPlayer
 ---@param dt number
 function GPlayer:update(dt)
-	local dx, dy = 0, 0
+	local dirX, dirY = 0, 0
 
 	if love.keyboard.isDown("w") then
-		dy = dy - 1
+		dirY = dirY - 1
 	end
 
 	if love.keyboard.isDown("s") then
-		dy = dy + 1
+		dirY = dirY + 1
 	end
 
 	if love.keyboard.isDown("a") then
-		dx = dx - 1
+		dirX = dirX - 1
 	end
 
 	if love.keyboard.isDown("d") then
-		dx = dx + 1
+		dirX = dirX + 1
 	end
 
 	-- Normalize diagonal movement
-	if dx ~= 0 or dy ~= 0 then
-		local len = math.sqrt(dx * dx + dy * dy)
-		dx = dx / len
-		dy = dy / len
+	local dirNotZero = false
+	if dirX ~= 0 or dirY ~= 0 then
+		dirNotZero = true
+
+		local len = math.sqrt(dirX * dirX + dirY * dirY)
+		dirX = dirX / len
+		dirY = dirY / len
 	end
 
 	if love.keyboard.isDown("space") and self.canShoot then
-		self.world:addEntity(GBullet:new(self, self.x, self.y, dx, dy))
+		local bulletDirX, bulletDirY = dirX, dirY
+		if dirX == 0 and dirY == 0 then
+			bulletDirX, bulletDirY = self.lastDirX, self.lastDirY
+		end
+
+		-- self.world:addEntity(GBullet:new(self, self.x, self.y, bulletDirX, bulletDirY))
+		self.world:addEntity(GBullet:new(self, self.x, self.y, 1, 0))
+		self.world:addEntity(GBullet:new(self, self.x, self.y, 1, 1))
+		self.world:addEntity(GBullet:new(self, self.x, self.y, 1, -1))
+
+		self.world:addEntity(GBullet:new(self, self.x, self.y, -1, 0))
+		self.world:addEntity(GBullet:new(self, self.x, self.y, -1, 1))
+		self.world:addEntity(GBullet:new(self, self.x, self.y, -1, -1))
+
+		self.world:addEntity(GBullet:new(self, self.x, self.y, 0, 1))
+		self.world:addEntity(GBullet:new(self, self.x, self.y, 0, -1))
 		self.canShoot = false
 	end
 
@@ -69,8 +93,13 @@ function GPlayer:update(dt)
 		end
 	end
 
-	self.moveTargetX = self.x + dx * self.speed * dt
-	self.moveTargetY = self.y + dy * self.speed * dt
+	self.moveTargetX = self.x + dirX * self.speed * dt
+	self.moveTargetY = self.y + dirY * self.speed * dt
+
+	if dirNotZero then
+		self.lastDirX = dirX
+		self.lastDirY = dirY
+	end
 end
 
 ---@param other GPhysicsObject

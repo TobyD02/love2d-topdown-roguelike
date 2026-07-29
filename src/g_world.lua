@@ -51,7 +51,7 @@ function GWorld:addWalls(walls)
 end
 
 ---@param self GWorld
----@param item GEntity
+---@param entity GEntity
 function GWorld:addEntity(entity)
 	entity.world = self
 
@@ -62,9 +62,13 @@ function GWorld:addEntity(entity)
 end
 
 ---@param self GWorld
----@param item GEntity
+---@param entity GEntity
 function GWorld:removeEntity(entity)
+	if entity.queuedForDelete then
+		return
+	end
 	table.insert(self.entityRemoveQueue, entity)
+	entity.queuedForDelete = true
 end
 
 function GWorld:processEntityRemoveQueue()
@@ -96,6 +100,10 @@ function GWorld:update(dt)
 	end
 
 	for _, entity in ipairs(self.entities) do
+		if entity.queuedForDelete then
+			goto continue
+		end
+
 		entity:update(dt)
 
 		local count = 0
@@ -111,6 +119,8 @@ function GWorld:update(dt)
 		end
 
 		entity.x, entity.y = self.bumpWorld:getRect(entity)
+
+		::continue::
 	end
 
 	self:processEntityRemoveQueue()

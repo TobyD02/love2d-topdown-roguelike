@@ -9,6 +9,7 @@ local Constants = require("constants")
 ---@field height number
 ---@field moveTargetX number
 ---@field moveTargetY number
+---@field queuedForDelete boolean
 
 local GEntity = {}
 GEntity.__index = GEntity
@@ -32,6 +33,7 @@ function GEntity:new(x, y, width, height, type)
 	obj.height = height
 	obj.moveTargetX = x
 	obj.moveTargetY = y
+	obj.queuedForDelete = false
 
 	return obj
 end

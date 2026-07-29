@@ -39,18 +39,16 @@ end
 
 ---@param other GPhysicsObject
 function GBullet:filter(other)
-	if other.type == self.owner.type or other.type == Constants.TYPE_BULLET then
-		return Constants.FILTER_CROSS
-	else
-		return Constants.FILTER_TOUCH
-	end
+	return Constants.FILTER_CROSS
 end
 
 ---@param other GPhysicsObject
 function GBullet:onCollision(other)
-	if other.type ~= Constants.TYPE_PLAYER then
-		self.world:removeEntity(self)
+	if other.type == self.owner.type or other.type == Constants.TYPE_BULLET then
+		return
 	end
+
+	self.world:removeEntity(self)
 end
 
 ---@param self GBullet
