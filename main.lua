@@ -3,7 +3,7 @@ local GWall = require("src.g_wall")
 local GPlayer = require("src.g_player")
 
 ---@type GWorld
-world = GWorld:new(64, 24, 24)
+local world = GWorld:new(64, 24, 24)
 
 function love.load()
 	love.window.setMode(960, 540)
@@ -15,7 +15,7 @@ function love.load()
 		GWall:new(928, 0, 32, 540),
 	})
 
-	world:addEntity(GPlayer:new(100, 100, 20, 20))
+	world:addEntity(GPlayer:new(100, 100))
 end
 
 function love.update(dt)

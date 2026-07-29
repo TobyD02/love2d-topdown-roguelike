@@ -11,11 +11,12 @@ GWall.__index = GWall
 
 setmetatable(GWall, { __index = GPhysicsObject })
 
+---@generic TWall
 ---@param x number
 ---@param y number
 ---@param width number
 ---@param height number
----@return GWall
+---@return TWall
 function GWall:new(x, y, width, height)
 	local obj = GPhysicsObject.new(self, Constants.TYPE_WALL)
 	obj.x = x

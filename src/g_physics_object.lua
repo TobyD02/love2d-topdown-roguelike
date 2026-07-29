@@ -3,8 +3,9 @@
 local GPhysicsObject = {}
 GPhysicsObject.__index = GPhysicsObject
 
+---@generic TPhysicsObject
 ---@param type string
----@return GPhysicsObject
+---@return TPhysicsObject
 function GPhysicsObject:new(type)
 	local obj = {
 		type = type,

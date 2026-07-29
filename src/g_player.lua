@@ -16,11 +16,10 @@ GPlayer.__index = GPlayer
 -- Inherit from GEntity
 setmetatable(GPlayer, { __index = GEntity })
 
+---@generic TPlayer
 ---@param x number
 ---@param y number
----@param width number
----@param height number
----@return GPlayer
+---@return TPlayer
 function GPlayer:new(x, y)
 	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, Constants.TYPE_PLAYER)
 	obj.health = 100

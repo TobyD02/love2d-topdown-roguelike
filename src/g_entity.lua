@@ -12,20 +12,20 @@ local Constants = require("constants")
 ---@field queuedForDelete boolean
 ---@field originX number
 ---@field originY number
-
 local GEntity = {}
 GEntity.__index = GEntity
 
 -- Inherit from GPhysicsObject
 setmetatable(GEntity, { __index = GPhysicsObject })
 
----@param self GEntity
+---@generic TEntity
+---@param self TEntity
 ---@param x number
 ---@param y number
 ---@param width number
 ---@param height number
 ---@param type string
----@return GEntity
+---@return TEntity
 function GEntity:new(x, y, width, height, type)
 	local obj = GPhysicsObject.new(self, type)
 	obj.world = nil
@@ -44,31 +44,35 @@ end
 ---@param directionX number
 ---@param directionY number
 function GEntity:move(directionX, directionY)
-	self.moveTargetX = x + directionX
-	self.moveTargetY = y + directionY
+	self.moveTargetX = self.x + directionX
+	self.moveTargetY = self.y + directionY
 end
 
+---@param self GEntity
 ---@return string
 function GEntity:filter()
 	return Constants.FILTER_SLIDE
 end
 
 ---@param self GEntity
----@return originX number
----@return originY number
+---@return number
+---@return number
 function GEntity:getOrigin()
 	return self.x + (self.width / 2), self.y + (self.height / 2)
 end
 
+---@param self GEntity
 ---@param dt number
 function GEntity:update(dt)
 	-- Do nothing
 end
 
-function GEntity:draw(dt)
+---@param self GEntity
+function GEntity:draw()
 	-- Do nothing
 end
 
+---@param self GEntity
 ---@param other GPhysicsObject
 function GEntity:onCollision(other)
 	-- Do nothing

@@ -1,6 +1,4 @@
 local GEntity = require("src.g_entity")
-local GWall = require("src.g_wall")
-local bump = require("lib.bump.bump")
 
 ---@class GWorld
 ---@field cellSize number
@@ -12,7 +10,6 @@ local bump = require("lib.bump.bump")
 ---@field walls GWall[]
 ---@field bumpWorld bump.World
 local GWorld = {}
-
 GWorld.__index = GWorld
 
 ---@param width number
@@ -100,6 +97,7 @@ function GWorld:update(dt)
 	end
 
 	for _, entity in ipairs(self.entities) do
+		---@type GEntity
 		if entity.queuedForDelete then
 			goto continue
 		end
@@ -107,6 +105,7 @@ function GWorld:update(dt)
 		entity:update(dt)
 
 		local count = 0
+		local collisions = {}
 
 		if entity.x ~= entity.moveTargetX or entity.y ~= entity.moveTargetY then
 			_, _, collisions, count =

@@ -12,13 +12,14 @@ GBullet.__index = GBullet
 -- Inherit from GEntity
 setmetatable(GBullet, { __index = GEntity })
 
+---@generic TBullet
 ---@param self GBullet
 ---@param owner GEntity
----@param x
+---@param x number
 ---@param y number
 ---@param dirX number
 ---@param dirY number
----@return GBullet
+---@return TBullet
 function GBullet:new(owner, x, y, dirX, dirY)
 	local obj = GEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE, Constants.TYPE_BULLET)
 
