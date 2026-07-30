@@ -5,8 +5,8 @@ local Tags = require("src.tags")
 
 ---@class GEntity : GPhysicsObject
 ---@field world GWorld
----@field moveTargetX number
----@field moveTargetY number
+---@field velocityX number
+---@field velocityY number
 ---@field queuedForDelete boolean
 ---@field originX number
 ---@field originY number
@@ -33,8 +33,8 @@ function GEntity:new(x, y, width, height)
 	obj.y = y
 	obj.width = width
 	obj.height = height
-	obj.moveTargetX = x
-	obj.moveTargetY = y
+	obj.velocityX = x
+	obj.velocityY = y
 	obj.queuedForDelete = false
 
 	return obj
@@ -44,8 +44,8 @@ end
 ---@param directionX number
 ---@param directionY number
 function GEntity:move(directionX, directionY)
-	self.moveTargetX = self.x + directionX
-	self.moveTargetY = self.y + directionY
+	self.velocityX = self.velocityX + directionX
+	self.velocityY = self.velocityY + directionY
 end
 
 ---@param self GEntity
@@ -68,7 +68,19 @@ end
 
 ---@param self GEntity
 ---@param dt number
+function GEntity:preUpdate(dt)
+	-- Do nothing
+end
+
+---@param self GEntity
+---@param dt number
 function GEntity:update(dt)
+	-- Do nothing
+end
+
+---@param self GEntity
+---@param dt number
+function GEntity:postUpdate(dt)
 	-- Do nothing
 end
 

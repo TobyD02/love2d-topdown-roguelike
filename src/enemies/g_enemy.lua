@@ -1,24 +1,25 @@
-local GEntity = require("src.g_entity")
+local GKinematicEntity = require("src.g_kinematic_entity")
 local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
 local Tags = require("src.tags")
 local Helpers = require("src.helpers")
 
----@class GEnemy : GEntity
+---@class GEnemy : GKinematicEntity
 ---@field health number
----@field speed number
 ---@field canShoot boolean
 ---@field shootTimer number
 ---@field maxShootTimer number
 ---@field shooter GShooter
----@field target GEntity|nil
+---@field target GKinematicEntity|nil
 ---@field separationX number
 ---@field separationY number
+---@field moveDirX number
+---@field moveDirY number
 local GEnemy = {}
 GEnemy.__index = GEnemy
 
--- Inherit from GEntity
-setmetatable(GEnemy, { __index = GEntity })
+-- Inherit from GKinematicEntity
+setmetatable(GEnemy, { __index = GKinematicEntity })
 
 ---@generic TEnemy
 ---@param x number
@@ -26,17 +27,21 @@ setmetatable(GEnemy, { __index = GEntity })
 ---@return TEnemy
 function GEnemy:new(x, y)
 	---@type GEnemy
-	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
+	local obj = GKinematicEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
 	obj:addTag(Tags.ENEMY)
 
 	obj.health = 100
-	obj.speed = 100
+	obj.maxSpeed = 7
+	obj.accel = 50
+	obj.friction = 0.9
 
 	obj.shooter = GShooter:new(obj)
 	obj.canShoot = true
 	obj.maxShootTimer = 0.1
 	obj.shootTimer = obj.maxShootTimer
 	obj.target = nil
+
+	obj.moveDirX, obj.moveDirY = 0, 0
 
 	obj.separationX = 0
 	obj.separationY = 0
@@ -50,6 +55,7 @@ function GEnemy:update(dt)
 	self.shooter:update(dt)
 
 	if self.target == nil then
+		---@type GPlayer[]
 		local players = self.world:getEntitiesByTag(Tags.PLAYER)
 		if #players > 0 then
 			self.target = players[1]
@@ -67,12 +73,25 @@ function GEnemy:filter(other)
 	if other:hasTag(Tags.BULLET) then
 		---@type GBullet
 		local b = other
-		if b.owner == self then
+		if Helpers:isMapEqual(b.owner.tags, self.tags) then
 			return Constants.FILTER_CROSS
 		end
 	end
 
 	return Constants.FILTER_SLIDE
+end
+
+function GEnemy:preUpdate(dt)
+	self.moveDirX, self.moveDirY = 0, 0
+end
+
+function GEnemy:postUpdate(dt)
+	GKinematicEntity.postUpdate(self, dt)
+	if self.moveDirX == 0 and self.moveDirY == 0 then
+		self.velocityX = self.velocityX * self.friction
+		self.velocityY = self.velocityY * self.friction
+		self.velocityX, self.velocityY = Helpers:roundVecZero(self.velocityX, self.velocityY)
+	end
 end
 
 ---@param self GEnemy

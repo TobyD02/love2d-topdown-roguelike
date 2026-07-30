@@ -1,12 +1,11 @@
-local GEntity = require("src.g_entity")
+local GKinematicEntity = require("src.g_kinematic_entity")
 local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
 local Tags = require("src.tags")
 local Helpers = require("src.helpers")
 
----@class GPlayer : GEntity
+---@class GPlayer : GKinematicEntity
 ---@field health number
----@field speed number
 ---@field canShoot boolean
 ---@field shootTimer number
 ---@field maxShootTimer number
@@ -16,8 +15,8 @@ local Helpers = require("src.helpers")
 local GPlayer = {}
 GPlayer.__index = GPlayer
 
--- Inherit from GEntity
-setmetatable(GPlayer, { __index = GEntity })
+-- Inherit from GKinematicEntity
+setmetatable(GPlayer, { __index = GKinematicEntity })
 
 ---@generic TPlayer
 ---@param x number
@@ -26,11 +25,15 @@ setmetatable(GPlayer, { __index = GEntity })
 ---@return TPlayer
 function GPlayer:new(x, y, shooter)
 	---@type GPlayer
-	local obj = GEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
+	local obj = GKinematicEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
 	obj:addTag(Tags.PLAYER)
 
 	obj.health = 100
-	obj.speed = 200
+	obj.accel = 50
+	obj.maxSpeed = 10
+	obj.friction = 0.9
+
+	obj.velocityX, obj.velocityY = 0, 0
 
 	if shooter == nil then
 		shooter = GShooter:new(obj)
@@ -71,6 +74,16 @@ function GPlayer:update(dt)
 	-- Normalize diagonal movement
 	dirX, dirY = Helpers:normalize(dirX, dirY)
 
+	if dirX == 0 and dirY == 0 then
+		self.velocityX = self.velocityX * self.friction
+		self.velocityY = self.velocityY * self.friction
+		self.velocityX, self.velocityY = Helpers:roundVecZero(self.velocityX, self.velocityY, 0.5)
+	else
+		self.velocityX = self.velocityX + dirX * self.accel * dt
+		self.velocityY = self.velocityY + dirY * self.accel * dt
+	end
+
+	--- Shooting logic
 	if love.keyboard.isDown("space") then
 		local bulletDirX, bulletDirY = dirX, dirY
 		if dirX == 0 and dirY == 0 then
@@ -81,9 +94,6 @@ function GPlayer:update(dt)
 		local oX, oY = self:getOrigin()
 		self.shooter:shoot(oX, oY, bulletDirX, bulletDirY)
 	end
-
-	self.moveTargetX = self.x + dirX * self.speed * dt
-	self.moveTargetY = self.y + dirY * self.speed * dt
 end
 
 ---@param self GPlayer
@@ -108,14 +118,14 @@ end
 
 ---@param self GPlayer
 function GPlayer:draw()
-	GEntity.draw(self) -- Call parent draw function first
+	GKinematicEntity.draw(self) -- Call parent draw function first
 
 	love.graphics.setColor(0.9, 0.3, 0.3)
 	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
 function GPlayer:setWorld(world)
-	GEntity.setWorld(self, world)
+	GKinematicEntity.setWorld(self, world)
 	self.shooter:setWorld(world)
 end
 

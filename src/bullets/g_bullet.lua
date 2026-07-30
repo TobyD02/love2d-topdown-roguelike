@@ -1,11 +1,10 @@
-local GEntity = require("src.g_entity")
+local GKinematicEntity = require("src.g_kinematic_entity")
 local Constants = require("src.constants")
 local Tags = require("src.tags")
 local Helpers = require("src.helpers")
 
----@class GBullet : GEntity
----@field owner GEntity
----@field speed number
+---@class GBullet : GKinematicEntity
+---@field owner GKinematicEntity
 ---@field dirX number
 ---@field dirY number
 ---@field range number
@@ -14,12 +13,12 @@ local Helpers = require("src.helpers")
 local GBullet = {}
 GBullet.__index = GBullet
 
--- Inherit from GEntity
-setmetatable(GBullet, { __index = GEntity })
+-- Inherit from GKinematicEntity
+setmetatable(GBullet, { __index = GKinematicEntity })
 
 ---@generic TBullet
 ---@param self GBullet
----@param owner GEntity
+---@param owner GKinematicEntity
 ---@param x number
 ---@param y number
 ---@param dirX number
@@ -28,13 +27,13 @@ setmetatable(GBullet, { __index = GEntity })
 ---@return TBullet
 function GBullet:new(owner, x, y, dirX, dirY, range)
 	---@type GBullet
-	local obj = GEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE)
+	local obj = GKinematicEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE)
 	obj:addTag(Tags.BULLET)
 
 	obj.startX = x
 	obj.startY = y
 
-	obj.speed = 1000
+	obj.maxSpeed = 1000
 	obj.owner = owner
 
 	if range == nil then
@@ -57,7 +56,7 @@ function GBullet:new(owner, x, y, dirX, dirY, range)
 end
 
 ---@param self GBullet
----@param owner GEntity
+---@param owner GKinematicEntity
 ---@param originX number
 ---@param originY number
 ---@param dirX number
@@ -79,7 +78,7 @@ end
 
 ---@param other GPhysicsObject
 function GBullet:onCollision(other)
-	if other == self.owner or other:hasTag(Tags.BULLET) then
+	if Helpers:isMapEqual(other.tags, self.owner.tags) or other:hasTag(Tags.BULLET) then
 		return
 	end
 
@@ -95,13 +94,13 @@ function GBullet:update(dt)
 		return
 	end
 
-	self.moveTargetX = self.x + self.dirX * self.speed * dt
-	self.moveTargetY = self.y + self.dirY * self.speed * dt
+	self.velocityX = self.dirX * self.maxSpeed * dt
+	self.velocityY = self.dirY * self.maxSpeed * dt
 end
 
 ---@param self GBullet
 function GBullet:draw()
-	GEntity.draw(self) -- Call parent draw function first
+	GKinematicEntity.draw(self) -- Call parent draw function first
 
 	love.graphics.setColor(0.6, 0.6, 0.2)
 	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)

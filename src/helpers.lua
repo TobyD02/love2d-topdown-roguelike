@@ -76,4 +76,49 @@ function Helpers:rotateVecByAngleDegrees(x, y, angle)
 	return x * cos - y * sin, x * sin + y * cos
 end
 
+---@param self Helpers
+---@param x number
+---@param y number
+---@param mag number
+function Helpers:clampVec(x, y, mag)
+	if Helpers:distance(0, 0, x, y) > mag then
+		local normX, normY = Helpers:normalize(x, y)
+		return normX * mag, normY * mag
+	end
+	return x, y
+end
+
+---@param self Helpers
+---@param x number
+---@param y number
+---@param lowBound number|nil
+function Helpers:roundVecZero(x, y, lowBound)
+	if lowBound == nil then
+		lowBound = 1
+	end
+
+	local distance = Helpers:distance(0, 0, x, y)
+
+	if distance <= lowBound then
+		return 0, 0
+	end
+
+	return x, y
+end
+
+---@generic TKey
+---@generic TValue
+---@param self Helpers
+---@param a1 table<TKey, TValue>[]
+---@param a2 table<TKey, TValue>[]
+function Helpers:isMapEqual(a1, a2)
+	for key, _ in pairs(a1) do
+		if a2[key] ~= a1[key] then
+			return false
+		end
+	end
+
+	return true
+end
+
 return Helpers

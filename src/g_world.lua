@@ -154,14 +154,16 @@ function GWorld:update(dt)
 			goto continue
 		end
 
+		entity:preUpdate(dt)
 		entity:update(dt)
+		entity:postUpdate(dt)
 
 		local count = 0
 		local collisions = {}
 
-		if entity.x ~= entity.moveTargetX or entity.y ~= entity.moveTargetY then
+		if entity.velocityX ~= 0 or entity.velocityY ~= 0 then
 			_, _, collisions, count =
-				self.bumpWorld:move(entity, entity.moveTargetX, entity.moveTargetY, collisionFilter)
+				self.bumpWorld:move(entity, entity.x + entity.velocityX, entity.y + entity.velocityY, collisionFilter)
 		end
 
 		for i = 1, count do

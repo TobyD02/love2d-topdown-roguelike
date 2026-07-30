@@ -37,23 +37,33 @@ function GEnemySpitter:update(dt)
 
 	if self.target ~= nil then
 		local distance = Helpers:distance(self.x, self.y, self.target.x, self.target.y)
-		local dirX, dirY = Helpers:normalize(self.target.moveTargetX - self.x, self.target.moveTargetY - self.y)
+		local dirX, dirY = Helpers:normalize(self.target.x - self.x, self.target.y - self.y)
+		self.moveDirX, self.moveDirY = dirX, dirY
+		local timeLeftOnShooter = self.shooter.shootTimer
+		local timePassedOnShooter = self.shooter.maxShootTimer - self.shooter.shootTimer
 
 		if distance < self.shooter:getRange() and self.shooter.canShoot then
 			local oX, oY = self:getOrigin()
 			self.shooter:shoot(oX, oY, dirX, dirY)
-		elseif
-			Helpers:distance(self.x, self.y, self.target.moveTargetX, self.target.moveTargetY) < self.moveAwayRange
-		then
-			self.moveTargetX = self.x + (-dirX + self.separationX) * self.speed * dt
-			self.moveTargetY = self.y + (-dirY + self.separationY) * self.speed * dt
-		elseif self.shooter.shootTimer <= self.shooter.maxShootTimer - 0.5 then
-			self.moveTargetX = self.x + (dirX + self.separationX) * self.speed * dt
-			self.moveTargetY = self.y + (dirY + self.separationY) * self.speed * dt
+		elseif distance < self.moveAwayRange then
+			self.velocityX = self.velocityX + (-self.moveDirX + self.separationX) * self.accel * dt
+			self.velocityY = self.velocityY + (-self.moveDirY + self.separationY) * self.accel * dt
+		elseif distance > self.shooter:getRange() or (timeLeftOnShooter >= 0.5 and timePassedOnShooter >= 0.5) then
+			self.velocityX = self.velocityX + (self.moveDirX + self.separationX) * self.accel * dt
+			self.velocityY = self.velocityY + (self.moveDirY + self.separationY) * self.accel * dt
+		else
+			self.moveDirX, self.moveDirY = 0, 0
+			self.velocityX = self.velocityX + self.separationX * self.accel * dt
+			self.velocityY = self.velocityY + self.separationY * self.accel * dt
 		end
 	end
 
 	self.separationX, self.separationY = 0, 0
+end
+
+function GEnemySpitter:draw()
+	love.graphics.setColor(0, 0.6, 0)
+	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
 return GEnemySpitter
