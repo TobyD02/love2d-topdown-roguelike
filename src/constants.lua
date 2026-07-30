@@ -2,7 +2,7 @@ local Constants = {
 
 	CELL_SIZE = 64,
 	PLAYER_SIZE = 32,
-	BULLET_SIZE = 24,
+	BULLET_SIZE = 16,
 	WORLD_WIDTH = 64 * 20,
 	WORLD_HEIGHT = 64 * 20,
 

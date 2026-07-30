@@ -43,7 +43,7 @@ function GPlayer:new(x, y, shooter)
 	obj.canShoot = true
 	obj.maxShootTimer = 0.1
 	obj.shootTimer = obj.maxShootTimer
-	obj.lastDirX = 1 -- Start with dir x as 1 so that it is normalized
+	obj.lastDirX = 1 -- Start with moveDir x as 1 so that it is normalized
 	obj.lastDirY = 0
 	return obj
 end
@@ -53,46 +53,37 @@ end
 function GPlayer:update(dt)
 	self.shooter:update(dt)
 
-	local dirX, dirY = 0, 0
+	local moveDirX, moveDirY = 0, 0
+	local shootDirX, shootDirY = 0, 0
 
-	if love.keyboard.isDown("w") then
-		dirY = dirY - 1
-	end
+	moveDirY = love.keyboard.isDown("s") and moveDirY + 1 or moveDirY
+	moveDirY = love.keyboard.isDown("w") and moveDirY - 1 or moveDirY
 
-	if love.keyboard.isDown("s") then
-		dirY = dirY + 1
-	end
+	moveDirX = love.keyboard.isDown("d") and moveDirX + 1 or moveDirX
+	moveDirX = love.keyboard.isDown("a") and moveDirX - 1 or moveDirX
 
-	if love.keyboard.isDown("a") then
-		dirX = dirX - 1
-	end
+	shootDirY = love.keyboard.isDown("down") and shootDirY + 1 or shootDirY
+	shootDirY = love.keyboard.isDown("up") and shootDirY - 1 or shootDirY
 
-	if love.keyboard.isDown("d") then
-		dirX = dirX + 1
-	end
+	shootDirX = love.keyboard.isDown("right") and shootDirX + 1 or shootDirX
+	shootDirX = love.keyboard.isDown("left") and shootDirX - 1 or shootDirX
 
 	-- Normalize diagonal movement
-	dirX, dirY = Helpers:normalize(dirX, dirY)
+	moveDirX, moveDirY = Helpers:normalize(moveDirX, moveDirY)
 
-	if dirX == 0 and dirY == 0 then
+	if moveDirX == 0 and moveDirY == 0 then
 		self.velocityX = self.velocityX * self.friction
 		self.velocityY = self.velocityY * self.friction
 		self.velocityX, self.velocityY = Helpers:roundVecZero(self.velocityX, self.velocityY, 0.5)
 	else
-		self.velocityX = self.velocityX + dirX * self.accel * dt
-		self.velocityY = self.velocityY + dirY * self.accel * dt
+		self.velocityX = self.velocityX + moveDirX * self.accel * dt
+		self.velocityY = self.velocityY + moveDirY * self.accel * dt
 	end
 
 	--- Shooting logic
-	if love.keyboard.isDown("space") then
-		local bulletDirX, bulletDirY = dirX, dirY
-		if dirX == 0 and dirY == 0 then
-			bulletDirX, bulletDirY = self.lastDirX, self.lastDirY
-		end
-
-		-- self.world:addEntity(GBullet:new(self, self.x, self.y, bulletDirX, bulletDirY))
+	if Helpers:distanceSquared(0, 0, shootDirX, shootDirY) > 0 then
 		local oX, oY = self:getOrigin()
-		self.shooter:shoot(oX, oY, bulletDirX, bulletDirY)
+		self.shooter:shoot(oX, oY, shootDirX, shootDirY)
 	end
 end
 
