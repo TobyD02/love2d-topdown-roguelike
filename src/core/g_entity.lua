@@ -1,4 +1,4 @@
-local GPhysicsObject = require("src.g_physics_object")
+local GPhysicsObject = require("src.core.g_physics_object")
 local Constants = require("src.constants")
 local Helpers = require("src.helpers")
 local Tags = require("src.tags")

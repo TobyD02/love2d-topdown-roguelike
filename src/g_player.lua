@@ -1,4 +1,4 @@
-local GKinematicEntity = require("src.g_kinematic_entity")
+local GKinematicEntity = require("src.core.g_kinematic_entity")
 local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
 local Tags = require("src.tags")

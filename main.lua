@@ -1,4 +1,4 @@
-local GWorld = require("src.g_world")
+local GWorld = require("src.core.g_world")
 local GWall = require("src.g_wall")
 local GPlayer = require("src.g_player")
 local GEnemySpitter = require("src.enemies.g_enemy_spitter")

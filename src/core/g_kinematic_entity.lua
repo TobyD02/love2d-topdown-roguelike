@@ -1,4 +1,4 @@
-local GEntity = require("src.g_entity")
+local GEntity = require("src.core.g_entity")
 local Constants = require("src.constants")
 local Tags = require("src.tags")
 local Helpers = require("src.helpers")

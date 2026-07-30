@@ -1,4 +1,4 @@
-local GPhysicsObject = require("src.g_physics_object")
+local GPhysicsObject = require("src.core.g_physics_object")
 local Tags = require("src.tags")
 
 ---@class GWall : GPhysicsObject
