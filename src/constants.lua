@@ -1,5 +1,7 @@
 local Constants = {
 
+	ASSETS_PATH = "assets/",
+
 	CELL_SIZE = 64,
 	PLAYER_SIZE = 32,
 	BULLET_SIZE = 16,
