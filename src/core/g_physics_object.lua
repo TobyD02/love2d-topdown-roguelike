@@ -7,6 +7,7 @@ local Helpers = require("src.helpers")
 ---@field y number
 ---@field width number
 ---@field height number
+---@field color table<number, number, number>
 local GPhysicsObject = {}
 GPhysicsObject.__index = GPhysicsObject
 
@@ -16,8 +17,9 @@ GPhysicsObject.__index = GPhysicsObject
 ---@param y number
 ---@param width number
 ---@param height number
+---@param color table<number, number, number>|nil
 ---@return TPhysicsObject
-function GPhysicsObject:new(x, y, width, height)
+function GPhysicsObject:new(x, y, width, height, color)
 	local tags = {}
 
 	for _, tag in pairs(Tags) do
@@ -26,12 +28,17 @@ function GPhysicsObject:new(x, y, width, height)
 
 	tags[Tags.PHYSICS_OBJECT] = true
 
+	if color == nil then
+		color = { math.random(), math.random(), math.random() }
+	end
+
 	local obj = {
 		tags = tags,
 		x = x,
 		y = y,
 		width = width,
 		height = height,
+		color = color,
 	}
 
 	setmetatable(obj, self)
@@ -39,7 +46,10 @@ function GPhysicsObject:new(x, y, width, height)
 end
 
 ---@param self GPhysicsObject
-function GPhysicsObject:draw() end
+function GPhysicsObject:draw()
+	love.graphics.setColor(self.color)
+	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+end
 
 ---@param self GPhysicsObject
 function GPhysicsObject:drawDebug()

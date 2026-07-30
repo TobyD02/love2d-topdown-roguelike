@@ -1,6 +1,5 @@
 local GPhysicsObject = require("src.core.g_physics_object")
 local Constants = require("src.constants")
-local Helpers = require("src.helpers")
 local Tags = require("src.tags")
 
 ---@class GEntity : GPhysicsObject
@@ -22,9 +21,10 @@ setmetatable(GEntity, { __index = GPhysicsObject })
 ---@param y number
 ---@param width number
 ---@param height number
+---@param color table<number, number, number>|nil
 ---@return TEntity
-function GEntity:new(x, y, width, height)
-	local obj = GPhysicsObject.new(self, x, y, width, height)
+function GEntity:new(x, y, width, height, color)
+	local obj = GPhysicsObject.new(self, x, y, width, height, color)
 	obj:addTag(Tags.ENTITY)
 
 	obj.world = nil
@@ -35,6 +35,10 @@ function GEntity:new(x, y, width, height)
 	obj.velocityX = x
 	obj.velocityY = y
 	obj.queuedForDelete = false
+
+	if color == nil then
+		color = { math.random(), math.random(), math.random() }
+	end
 
 	return obj
 end

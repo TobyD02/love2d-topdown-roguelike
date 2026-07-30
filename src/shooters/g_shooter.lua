@@ -10,7 +10,7 @@ local GTimer = require("src.core.g_timer")
 ---@field shootStartX number
 ---@field shootStartY number
 local GShooter = {
-	range = 100,
+	range = 1000,
 }
 GShooter.__index = GShooter
 

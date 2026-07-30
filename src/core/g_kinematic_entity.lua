@@ -18,9 +18,10 @@ setmetatable(GKinematicEntity, { __index = GEntity })
 ---@param y number
 ---@param width number
 ---@param height number
+---@param color table<number, number, number> | nil
 ---@return TKinematicEntity
-function GKinematicEntity:new(x, y, width, height)
-	local obj = GEntity.new(self, x, y, width, height)
+function GKinematicEntity:new(x, y, width, height, color)
+	local obj = GEntity.new(self, x, y, width, height, color)
 	obj:addTag(Tags.KINEMATIC_ENTITY)
 
 	obj.accel = 50

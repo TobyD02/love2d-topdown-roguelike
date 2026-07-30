@@ -31,7 +31,7 @@ setmetatable(GEnemy, { __index = GKinematicEntity })
 ---@return TEnemy
 function GEnemy:new(x, y)
 	---@type GEnemy
-	local obj = GKinematicEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE)
+	local obj = GKinematicEntity.new(self, x, y, Constants.PLAYER_SIZE, Constants.PLAYER_SIZE, { 0.6, 0, 0 })
 	obj:addTag(Tags.ENEMY)
 
 	obj.health = 100
@@ -52,7 +52,7 @@ function GEnemy:new(x, y)
 	obj.separationX = 0
 	obj.separationY = 0
 
-	obj.findTargetTimer = GTimer:new(0.2)
+	obj.findTargetTimer = GTimer:new(0.05)
 
 	return obj
 end
@@ -79,6 +79,11 @@ function GEnemy:update(dt)
 	if self.distanceFromTargetSquared <= self.sleepRange * self.sleepRange then
 		self:think(dt)
 	end
+end
+
+---@param self GEnemy
+function GEnemy:draw()
+	GKinematicEntity.draw(self)
 end
 
 ---@param self GEnemy

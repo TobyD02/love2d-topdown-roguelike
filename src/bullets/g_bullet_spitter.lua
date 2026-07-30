@@ -36,9 +36,6 @@ end
 ---@param self GBulletSpitter
 function GBulletSpitter:draw()
 	GBullet.draw(self) -- Call parent draw function first
-
-	love.graphics.setColor(0.6, 0.6, 0.2)
-	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
 end
 
 return GBulletSpitter

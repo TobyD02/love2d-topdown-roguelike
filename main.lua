@@ -18,7 +18,7 @@ function love.load()
 	})
 
 	local wallSize = 128
-	for _ = 1, 100 do
+	for _ = 1, 10 do
 		local x = math.random(wallSize, Constants.WORLD_WIDTH - wallSize)
 		local y = math.random(wallSize, Constants.WORLD_HEIGHT - wallSize)
 		world:addWall(GWall:new(x, y, wallSize, wallSize))

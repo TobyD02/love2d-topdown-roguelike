@@ -53,8 +53,7 @@ function GEnemySpitter:think(dt)
 end
 
 function GEnemySpitter:draw()
-	love.graphics.setColor(0, 0.6, 0)
-	love.graphics.rectangle("fill", self.x, self.y, self.width, self.height)
+	GEnemy.draw(self)
 end
 
 return GEnemySpitter
