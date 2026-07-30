@@ -25,30 +25,23 @@ end
 
 ---@param self GEnemySpitter
 ---@param dt number
-function GEnemySpitter:update(dt)
-	GEnemy.update(self, dt)
-
-	if self.target == nil then
-		local players = self.world:getEntitiesByTag(Tags.PLAYER)
-		if #players > 0 then
-			self.target = players[1]
-		end
-	end
-
+function GEnemySpitter:think(dt)
 	if self.target ~= nil then
-		local distance = Helpers:distance(self.x, self.y, self.target.x, self.target.y)
 		local dirX, dirY = Helpers:normalize(self.target.x - self.x, self.target.y - self.y)
 		self.moveDirX, self.moveDirY = dirX, dirY
 		local timeLeftOnShooter = self.shooter.shootTimer.timeLeft
 		local timePassedOnShooter = self.shooter.shootTimer.waitTime - timeLeftOnShooter
 
-		if distance < self.shooter:getRange() and self.shooter.canShoot then
+		if self.distanceFromTargetSquared < self.shooter:getRangeSquared() and self.shooter.canShoot then
 			local oX, oY = self:getOrigin()
 			self.shooter:shoot(oX, oY, dirX, dirY)
-		elseif distance < self.moveAwayRange then
+		elseif self.distanceFromTargetSquared < self.moveAwayRange * self.moveAwayRange then
 			self.velocityX = self.velocityX + (-self.moveDirX + self.separationX) * self.accel * dt
 			self.velocityY = self.velocityY + (-self.moveDirY + self.separationY) * self.accel * dt
-		elseif distance > self.shooter:getRange() or (timeLeftOnShooter >= 0.5 and timePassedOnShooter >= 0.5) then
+		elseif
+			self.distanceFromTargetSquared > self.shooter:getRangeSquared()
+			or (timeLeftOnShooter >= 0.5 and timePassedOnShooter >= 0.5)
+		then
 			self.velocityX = self.velocityX + (self.moveDirX + self.separationX) * self.accel * dt
 			self.velocityY = self.velocityY + (self.moveDirY + self.separationY) * self.accel * dt
 		else
@@ -57,8 +50,6 @@ function GEnemySpitter:update(dt)
 			self.velocityY = self.velocityY + self.separationY * self.accel * dt
 		end
 	end
-
-	self.separationX, self.separationY = 0, 0
 end
 
 function GEnemySpitter:draw()

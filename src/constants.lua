@@ -3,6 +3,14 @@ local Constants = {
 	CELL_SIZE = 64,
 	PLAYER_SIZE = 32,
 	BULLET_SIZE = 24,
+	WORLD_WIDTH = 64 * 100,
+	WORLD_HEIGHT = 64 * 100,
+
+	WINDOW_WIDTH = 1280,
+	WINDOW_HEIGHT = 720,
+
+	REMOVE_QUEUE_BUDGET = 32,
+	ENTITY_LIMIT = 128,
 
 	---Normal collision filter
 	FILTER_SLIDE = "slide",

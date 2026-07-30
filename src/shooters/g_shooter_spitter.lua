@@ -7,7 +7,7 @@ local GTimer = require("src.core.g_timer")
 ---@field spread number
 ---@field bulletClass GBullet
 local GShooterSpitter = {
-	range = 300,
+	range = 600,
 }
 GShooterSpitter.__index = GShooterSpitter
 
@@ -22,7 +22,7 @@ function GShooterSpitter:new(owner)
 	local obj = GShooter.new(self, owner, bulletClass)
 
 	obj.spread = 10
-	obj.shootTimer = GTimer:new(1)
+	obj.shootTimer = GTimer:new(1 + math.random() * 2)
 	setmetatable(obj, self)
 	return obj
 end

@@ -63,6 +63,18 @@ function Helpers:distance(x1, y1, x2, y2)
 end
 
 ---@param self Helpers
+---@param x1 number
+---@param y1 number
+---@param x2 number
+---@param y2 number
+---@return number
+function Helpers:distanceSquared(x1, y1, x2, y2)
+	local dx = x2 - x1
+	local dy = y2 - y1
+	return dx * dx + dy * dy
+end
+
+---@param self Helpers
 ---@param x number
 ---@param y number
 ---@param angle number

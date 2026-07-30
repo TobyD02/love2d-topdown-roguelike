@@ -1,4 +1,5 @@
 local GKinematicEntity = require("src.core.g_kinematic_entity")
+local GTimer = require("src.core.g_timer")
 local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
 local Tags = require("src.tags")
@@ -15,6 +16,9 @@ local Helpers = require("src.helpers")
 ---@field separationY number
 ---@field moveDirX number
 ---@field moveDirY number
+---@field sleepRange number
+---@field findTargetTimer GTimer
+---@field distanceFromTargetSquared number
 local GEnemy = {}
 GEnemy.__index = GEnemy
 
@@ -35,6 +39,8 @@ function GEnemy:new(x, y)
 	obj.accel = 50
 	obj.friction = 0.9
 
+	obj.sleepRange = 1000
+
 	obj.shooter = GShooter:new(obj)
 	obj.canShoot = true
 	obj.maxShootTimer = 0.1
@@ -46,21 +52,39 @@ function GEnemy:new(x, y)
 	obj.separationX = 0
 	obj.separationY = 0
 
+	obj.findTargetTimer = GTimer:new(0.2)
+
 	return obj
 end
 
 ---@param self GEnemy
 ---@param dt number
 function GEnemy:update(dt)
+	self.findTargetTimer:update(dt)
 	self.shooter:update(dt)
 
-	if self.target == nil then
-		---@type GPlayer[]
-		local players = self.world:getEntitiesByTag(Tags.PLAYER)
-		if #players > 0 then
-			self.target = players[1]
+	if self.findTargetTimer:isFinished() then
+		if self.target == nil then
+			---@type GPlayer[]
+			local players = self.world:getEntitiesByTag(Tags.PLAYER)
+			if #players > 0 then
+				self.target = players[1]
+			end
 		end
+
+		self.distanceFromTargetSquared = Helpers:distanceSquared(self.x, self.y, self.target.x, self.target.y)
+		self.findTargetTimer:start()
 	end
+
+	if self.distanceFromTargetSquared <= self.sleepRange * self.sleepRange then
+		self:think(dt)
+	end
+end
+
+---@param self GEnemy
+---@param dt number
+function GEnemy:think(dtd)
+	-- Do nothing
 end
 
 ---@param self GEnemy
@@ -92,6 +116,8 @@ function GEnemy:postUpdate(dt)
 		self.velocityY = self.velocityY * self.friction
 		self.velocityX, self.velocityY = Helpers:roundVecZero(self.velocityX, self.velocityY)
 	end
+
+	self.separationX, self.separationY = 0, 0
 end
 
 ---@param self GEnemy

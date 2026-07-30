@@ -2,32 +2,37 @@ local GWorld = require("src.core.g_world")
 local GWall = require("src.g_wall")
 local GPlayer = require("src.g_player")
 local GEnemySpitter = require("src.enemies.g_enemy_spitter")
-local Tags = require("src.tags")
+local Constants = require("src.constants")
 
 ---@type GWorld
 local world = GWorld:new(64, 24, 24)
 
 function love.load()
-	love.window.setMode(960, 540)
+	love.window.setMode(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
 
 	world:addWalls({
-		GWall:new(0, 0, 960, 32),
-		GWall:new(0, 508, 960, 32),
-		GWall:new(0, 0, 32, 960),
-		GWall:new(928, 0, 32, 540),
+		GWall:new(0, 0, Constants.WORLD_WIDTH, 32),
+		GWall:new(0, Constants.WORLD_HEIGHT - 32, Constants.WORLD_WIDTH, 32),
+		GWall:new(0, 0, 32, Constants.WORLD_HEIGHT),
+		GWall:new(Constants.WORLD_WIDTH - 32, 0, 32, Constants.WORLD_HEIGHT),
 	})
 
-	world:addEntity(GPlayer:new(100, 100))
-	world:addEntity(GEnemySpitter:new(120, 100))
-	world:addEntity(GEnemySpitter:new(140, 100))
-	world:addEntity(GEnemySpitter:new(160, 100))
-	world:addEntity(GEnemySpitter:new(180, 100))
-	world:addEntity(GEnemySpitter:new(200, 100))
-	world:addEntity(GEnemySpitter:new(220, 100))
-	world:addEntity(GEnemySpitter:new(240, 100))
-	world:addEntity(GEnemySpitter:new(260, 100))
-	world:addEntity(GEnemySpitter:new(280, 100))
-	world:addEntity(GEnemySpitter:new(300, 100))
+	local wallSize = 128
+	for _ = 1, 100 do
+		local x = math.random(wallSize, Constants.WORLD_WIDTH - wallSize)
+		local y = math.random(wallSize, Constants.WORLD_HEIGHT - wallSize)
+		world:addWall(GWall:new(x, y, wallSize, wallSize))
+	end
+
+	local player = GPlayer:new(100, 100)
+	world:addEntity(player)
+	world:setCameraTarget(player)
+
+	for _ = 1, 64 do
+		local x = math.random(Constants.PLAYER_SIZE, Constants.WORLD_WIDTH / 5 - Constants.PLAYER_SIZE)
+		local y = math.random(Constants.PLAYER_SIZE, Constants.WORLD_HEIGHT / 5 - Constants.PLAYER_SIZE)
+		world:addEntity(GEnemySpitter:new(x, y))
+	end
 end
 
 function love.update(dt)
