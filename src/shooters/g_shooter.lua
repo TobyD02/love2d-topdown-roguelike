@@ -1,16 +1,16 @@
+local GTimer = require("src.core.g_timer")
+
 ---@class GShooter
 ---@field world GWorld
 ---@field owner GEntity
 ---@field bulletClass GBullet
 ---@field canShoot boolean
----@field shootTimer number
----@field maxShootTimer number
+---@field shootTimer GTimer
 ---@field range number
 ---@field shootStartX number
 ---@field shootStartY number
 local GShooter = {
 	range = 100,
-	maxShootTimer = 1,
 }
 GShooter.__index = GShooter
 
@@ -27,7 +27,7 @@ function GShooter:new(owner, bulletClass)
 		owner = owner,
 		bulletClass = bulletClass,
 		canShoot = true,
-		shootTimer = 0,
+		shootTimer = GTimer:new(3),
 		shootStartX = owner.x,
 		shootStartY = owner.y,
 	}
@@ -53,12 +53,11 @@ end
 ---@param self GShooter
 ---@param dt number
 function GShooter:update(dt)
-	if not self.canShoot then
-		self.shootTimer = self.shootTimer - dt
-		if self.shootTimer <= 0 then
-			self.canShoot = true
-			self.shootTimer = self.maxShootTimer
-		end
+	self.shootTimer:update(dt)
+
+	if self.shootTimer:isFinished() then
+		self.canShoot = true
+		self.shootTimer:start()
 	end
 end
 

@@ -4,7 +4,7 @@ local Tags = require("src.tags")
 local Helpers = require("src.helpers")
 
 ---@class GBullet : GKinematicEntity
----@field owner GKinematicEntity
+---@field owner GEntity
 ---@field dirX number
 ---@field dirY number
 ---@field range number
@@ -18,7 +18,7 @@ setmetatable(GBullet, { __index = GKinematicEntity })
 
 ---@generic TBullet
 ---@param self GBullet
----@param owner GKinematicEntity
+---@param owner GEntity
 ---@param x number
 ---@param y number
 ---@param dirX number
@@ -56,7 +56,7 @@ function GBullet:new(owner, x, y, dirX, dirY, range)
 end
 
 ---@param self GBullet
----@param owner GKinematicEntity
+---@param owner GEntity
 ---@param originX number
 ---@param originY number
 ---@param dirX number

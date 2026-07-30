@@ -14,7 +14,7 @@ GBulletSpitter.__index = GBulletSpitter
 setmetatable(GBulletSpitter, { __index = GBullet })
 
 ---@generic TBulletSpitter
----@param self GBulletSpitter
+---@param self TBulletSpitter
 ---@param owner GEntity
 ---@param x number
 ---@param y number
@@ -23,7 +23,6 @@ setmetatable(GBulletSpitter, { __index = GBullet })
 ---@param range number
 ---@return TBulletSpitter
 function GBulletSpitter:new(owner, x, y, dirX, dirY, range)
-	---@type GBulletSpitter
 	local obj = GBullet.new(self, owner, x, y, dirX, dirY, range)
 	return obj
 end

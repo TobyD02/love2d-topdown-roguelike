@@ -1,5 +1,6 @@
 local GShooter = require("src.shooters.g_shooter")
 local Helpers = require("src.helpers")
+local GTimer = require("src.core.g_timer")
 ---@class GShooterSpitter : GShooter
 ---@field world GWorld
 ---@field owner GEntity
@@ -7,7 +8,6 @@ local Helpers = require("src.helpers")
 ---@field bulletClass GBullet
 local GShooterSpitter = {
 	range = 300,
-	maxShootTimer = 3,
 }
 GShooterSpitter.__index = GShooterSpitter
 
@@ -22,7 +22,7 @@ function GShooterSpitter:new(owner)
 	local obj = GShooter.new(self, owner, bulletClass)
 
 	obj.spread = 10
-
+	obj.shootTimer = GTimer:new(1)
 	setmetatable(obj, self)
 	return obj
 end

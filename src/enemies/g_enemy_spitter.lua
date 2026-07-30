@@ -39,8 +39,8 @@ function GEnemySpitter:update(dt)
 		local distance = Helpers:distance(self.x, self.y, self.target.x, self.target.y)
 		local dirX, dirY = Helpers:normalize(self.target.x - self.x, self.target.y - self.y)
 		self.moveDirX, self.moveDirY = dirX, dirY
-		local timeLeftOnShooter = self.shooter.shootTimer
-		local timePassedOnShooter = self.shooter.maxShootTimer - self.shooter.shootTimer
+		local timeLeftOnShooter = self.shooter.shootTimer.timeLeft
+		local timePassedOnShooter = self.shooter.shootTimer.waitTime - timeLeftOnShooter
 
 		if distance < self.shooter:getRange() and self.shooter.canShoot then
 			local oX, oY = self:getOrigin()

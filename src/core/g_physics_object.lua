@@ -10,7 +10,8 @@ local Helpers = require("src.helpers")
 local GPhysicsObject = {}
 GPhysicsObject.__index = GPhysicsObject
 
----@generic TPhysicsObject
+---@generic TPhysicsObject: GPhysicsObject
+---@param self TPhysicsObject
 ---@param x number
 ---@param y number
 ---@param width number

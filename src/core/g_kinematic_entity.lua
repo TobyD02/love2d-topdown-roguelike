@@ -1,5 +1,4 @@
 local GEntity = require("src.core.g_entity")
-local Constants = require("src.constants")
 local Tags = require("src.tags")
 local Helpers = require("src.helpers")
 
@@ -13,14 +12,14 @@ GKinematicEntity.__index = GKinematicEntity
 -- Inherit from GEntity
 setmetatable(GKinematicEntity, { __index = GEntity })
 
----@generic TPlayer
+---@generic TKinematicEntity:GKinematicEntity
+---@param self TKinematicEntity
 ---@param x number
 ---@param y number
 ---@param width number
 ---@param height number
----@return TPlayer
+---@return TKinematicEntity
 function GKinematicEntity:new(x, y, width, height)
-	---@type GKinematicEntity
 	local obj = GEntity.new(self, x, y, width, height)
 	obj:addTag(Tags.KINEMATIC_ENTITY)
 

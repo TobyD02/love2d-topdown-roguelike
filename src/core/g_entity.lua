@@ -16,7 +16,7 @@ GEntity.__index = GEntity
 -- Inherit from GPhysicsObject
 setmetatable(GEntity, { __index = GPhysicsObject })
 
----@generic TEntity
+---@generic TEntity : GEntity
 ---@param self TEntity
 ---@param x number
 ---@param y number
@@ -24,7 +24,6 @@ setmetatable(GEntity, { __index = GPhysicsObject })
 ---@param height number
 ---@return TEntity
 function GEntity:new(x, y, width, height)
-	---@type GEntity
 	local obj = GPhysicsObject.new(self, x, y, width, height)
 	obj:addTag(Tags.ENTITY)
 
