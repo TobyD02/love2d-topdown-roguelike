@@ -32,9 +32,14 @@ function GEnemySpitter:think(dt)
 		local timeLeftOnShooter = self.shooter.shootTimer.timeLeft
 		local timePassedOnShooter = self.shooter.shootTimer.waitTime - timeLeftOnShooter
 
-		if self.distanceFromTargetSquared < self.shooter:getRangeSquared() and self.shooter.canShoot then
+		if
+			self.distanceFromTargetSquared < self.shooter:getRangeSquared()
+			and self.shooter.canShoot
+			and self:canSeeTarget()
+		then
 			local oX, oY = self:getOrigin()
 			self.shooter:shoot(oX, oY, dirX, dirY)
+			print(self, "shot")
 		elseif self.distanceFromTargetSquared < self.moveAwayRange * self.moveAwayRange then
 			self.velocityX = self.velocityX + (-self.moveDirX + self.separationX) * self.accel * dt
 			self.velocityY = self.velocityY + (-self.moveDirY + self.separationY) * self.accel * dt

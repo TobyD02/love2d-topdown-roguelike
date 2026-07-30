@@ -82,6 +82,19 @@ function GEnemy:update(dt)
 end
 
 ---@param self GEnemy
+---@return boolean
+function GEnemy:canSeeTarget()
+	if self.target == nil then
+		return false
+	end
+
+	local tag = Tags.WALL
+
+	local hits = self.world:ray(self.x, self.y, self.target.x, self.target.y, tag)
+	return #hits == 0
+end
+
+---@param self GEnemy
 function GEnemy:draw()
 	GKinematicEntity.draw(self)
 end

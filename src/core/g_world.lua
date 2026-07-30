@@ -50,6 +50,38 @@ function GWorld:new(width, height, cellSize)
 	return obj
 end
 
+
+---@param tag string|nil
+local function rayFilter(tag)
+	if tag == nil then
+		return function(item) end
+	end
+	
+	---@param item GPhysicsObject
+	return function(item)
+		return item:hasTag(tag)
+	end
+end
+
+---@param self GWorld
+---@param startX number
+---@param startY number
+---@param endX number
+---@param endY number
+---@param tag string|nil
+---@return GPhysicsObject[]
+function GWorld:ray(startX, startY, endX, endY, tag)
+	local items, len = self.bumpWorld:querySegment(
+		startX,
+		startY,
+		endX,
+		endY,
+		rayFilter(tag)
+	)
+
+	return items
+end
+
 ---@param self GWorld
 ---@param wall GWall
 function GWorld:addWall(wall)
