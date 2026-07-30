@@ -100,7 +100,10 @@ end
 
 ---@param self GBullet
 function GBullet:draw()
-	GKinematicEntity.draw(self) -- Call parent draw function first
+	-- GKinematicEntity.draw(self) -- Call parent draw function first
+	love.graphics.setColor(self.color)
+	local oX, oY = self:getOrigin()
+	love.graphics.circle("fill", oX, oY, self.width / 2)
 end
 
 return GBullet
