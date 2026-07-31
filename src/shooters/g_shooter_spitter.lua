@@ -16,10 +16,11 @@ setmetatable(GShooterSpitter, { __index = GShooter })
 
 ---@generic TShooterSpitter
 ---@param owner GEntity
+---@param bulletColor
 ---@return TShooterSpitter
-function GShooterSpitter:new(owner)
+function GShooterSpitter:new(owner, bulletColor)
 	local bulletClass = require("src.bullets.g_bullet_spitter")
-	local obj = GShooter.new(self, owner, bulletClass)
+	local obj = GShooter.new(self, owner, bulletClass, bulletColor)
 
 	obj.spread = 10
 	obj.shootTimer = GTimer:new(2 + math.random() * 3, true)
@@ -41,6 +42,7 @@ function GShooterSpitter:shoot(originX, originY, directionX, directionY)
 			)
 		end
 		self.canShoot = false
+		self.shootTimer:start()
 	end
 end
 

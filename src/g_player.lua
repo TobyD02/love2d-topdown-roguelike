@@ -36,7 +36,7 @@ function GPlayer:new(x, y, shooter)
 	obj.velocityX, obj.velocityY = 0, 0
 
 	if shooter == nil then
-		shooter = GShooter:new(obj)
+		shooter = GShooter:new(obj, nil, self.color)
 	end
 
 	obj.shooter = shooter

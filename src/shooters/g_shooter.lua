@@ -46,6 +46,7 @@ end
 ---@param directionY number
 function GShooter:shoot(originX, originY, directionX, directionY)
 	if self.canShoot then
+		self.canShoot = false
 		self.world:addEntity(
 			self.bulletClass:newFromOrigin(
 				self.owner,
@@ -57,7 +58,7 @@ function GShooter:shoot(originX, originY, directionX, directionY)
 				self.bulletColor
 			)
 		)
-		self.canShoot = false
+		self.shootTimer:start()
 	end
 end
 
@@ -68,7 +69,6 @@ function GShooter:update(dt)
 
 	if self.shootTimer:isFinished() and not self.canShoot then
 		self.canShoot = true
-		self.shootTimer:start()
 	end
 end
 

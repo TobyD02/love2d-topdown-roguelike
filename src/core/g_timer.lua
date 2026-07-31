@@ -43,7 +43,7 @@ function GTimer:start()
 end
 
 function GTimer:isFinished()
-	return self.timeLeft <= 0
+	return self.timeLeft <= 0 and not self.active
 end
 
 return GTimer

@@ -18,7 +18,7 @@ setmetatable(GEnemySpitter, { __index = GEnemy })
 ---@return TEnemySpitter
 function GEnemySpitter:new(x, y)
 	local obj = GEnemy.new(self, x, y)
-	obj.shooter = GShooterSpitter:new(obj)
+	obj.shooter = GShooterSpitter:new(obj, self.color)
 	obj.shooter.bulletColor = { 1, 0.3, 0.3 }
 	obj.moveAwayRange = 100
 	return obj
