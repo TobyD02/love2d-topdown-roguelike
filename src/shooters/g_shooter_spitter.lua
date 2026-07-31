@@ -22,7 +22,7 @@ function GShooterSpitter:new(owner)
 	local obj = GShooter.new(self, owner, bulletClass)
 
 	obj.spread = 10
-	obj.shootTimer = GTimer:new(2 + math.random() * 3)
+	obj.shootTimer = GTimer:new(2 + math.random() * 3, true)
 	setmetatable(obj, self)
 	return obj
 end

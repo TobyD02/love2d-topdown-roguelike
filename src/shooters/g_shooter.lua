@@ -29,7 +29,7 @@ function GShooter:new(owner, bulletClass, bulletColor)
 		owner = owner,
 		bulletClass = bulletClass,
 		bulletColor = bulletColor,
-		canShoot = true,
+		canShoot = false,
 		shootTimer = GTimer:new(math.random() + 0.5),
 		shootStartX = owner.x,
 		shootStartY = owner.y,
@@ -66,7 +66,7 @@ end
 function GShooter:update(dt)
 	self.shootTimer:update(dt)
 
-	if self.shootTimer:isFinished() then
+	if self.shootTimer:isFinished() and not self.canShoot then
 		self.canShoot = true
 		self.shootTimer:start()
 	end

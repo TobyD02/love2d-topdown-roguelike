@@ -38,7 +38,7 @@ function love.load()
 	world:addEntity(player)
 	world:setCameraTarget(player)
 
-	for _ = 1, 1 do
+	for _ = 1, 3 do
 		local x = math.random(Constants.PLAYER_SIZE, Constants.WORLD_WIDTH / 5 - Constants.PLAYER_SIZE)
 		local y = math.random(Constants.PLAYER_SIZE, Constants.WORLD_HEIGHT / 5 - Constants.PLAYER_SIZE)
 		world:addEntity(GEnemySpitter:new(x, y))

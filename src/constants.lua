@@ -28,7 +28,7 @@ local Constants = {
 	TYPE_WALL = "wall",
 	TYPE_ENEMY = "enemy",
 
-	DEBUG = true,
+	DEBUG = false,
 }
 
 return Constants
