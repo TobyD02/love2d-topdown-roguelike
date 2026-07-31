@@ -9,6 +9,7 @@ local GSpriteSheetAnimation = require("src.core.g_sprite_sheet_animation")
 ---@type GWorld
 local world = GWorld:new(64, 24, 24)
 
+---@type GSpriteSheet
 local spriteSheet
 
 function love.load()
@@ -45,9 +46,17 @@ function love.load()
 	end
 end
 
+local flashTimer = 0
+
 function love.update(dt)
 	world:update(dt)
 	spriteSheet:update(dt)
+
+	flashTimer = flashTimer + dt
+	if flashTimer >= 2 then
+		spriteSheet:flash({ 1, 0, 0 }, 0.2)
+		flashTimer = 0
+	end
 end
 
 function love.draw()

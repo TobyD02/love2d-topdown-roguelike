@@ -1,10 +1,13 @@
 local Constants = require("src.constants")
-local GSpriteSheetAnimation = require("src.core.g_sprite_sheet_animation")
+local GTimer = require("src.core.g_timer")
 ---@class GSpriteSheet
 ---@field image love.Image
 ---@field quads love.Quad
 ---@field animations table<string, GSpriteSheetAnimation>
 ---@field currentAnimation string|nil
+---@field flashTimer GTimer
+---@field flashColor table<number, number, number>
+---@field color table<number, number, number>
 local GSpriteSheet = {}
 GSpriteSheet.__index = GSpriteSheet
 
@@ -17,13 +20,30 @@ GSpriteSheet.__index = GSpriteSheet
 ---@param quadSeparationY number|nil
 ---@param quadOffsetX number|nil
 ---@param quadOffsetY number|nil
+---@param color table<number, number, number> |nil
 ---@return TSpriteSheet
-function GSpriteSheet:new(imagePath, quadWidth, quadHeight, quadSeparationX, quadSeparationY, quadOffsetX, quadOffsetY)
+function GSpriteSheet:new(
+	imagePath,
+	quadWidth,
+	quadHeight,
+	quadSeparationX,
+	quadSeparationY,
+	quadOffsetX,
+	quadOffsetY,
+	color
+)
+	if color == nil then
+		color = { 1, 1, 1 }
+	end
+
 	local obj = {
 		image = love.graphics.newImage(Constants.ASSETS_PATH .. imagePath),
 		animations = {},
 		currentAnimation = nil,
 		quads = {},
+		color = color,
+		flashColor = color,
+		flashTimer = GTimer:new(1),
 	}
 
 	if quadSeparationX == nil then
@@ -77,6 +97,8 @@ end
 ---@param self GSpriteSheet
 ---@param dt number
 function GSpriteSheet:update(dt)
+	self.flashTimer:update(dt)
+
 	if self.currentAnimation == nil then
 		return
 	end
@@ -100,7 +122,12 @@ function GSpriteSheet:draw(x, y, rotation, scale)
 		return
 	end
 
-	love.graphics.setColor(1, 1, 1)
+	if self.flashTimer:isFinished() then
+		love.graphics.setColor(self.color)
+	else
+		love.graphics.setColor(self.flashColor)
+	end
+
 	love.graphics.draw(
 		self.image,
 		self.quads[self.animations[self.currentAnimation]:getFrame()],
@@ -110,6 +137,15 @@ function GSpriteSheet:draw(x, y, rotation, scale)
 		scale,
 		scale
 	)
+end
+
+---@param self GSpriteSheet
+---@param color table<number, number, number>
+---@param duration number
+function GSpriteSheet:flash(color, duration)
+	self.flashColor = color
+	self.flashTimer.waitTime = duration
+	self.flashTimer:start()
 end
 
 return GSpriteSheet
