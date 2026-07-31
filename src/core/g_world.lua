@@ -256,12 +256,17 @@ function GWorld:update(dt)
 
 		for i = 1, count do
 			local collision = collisions[i]
-			entity:onCollision(collision.other)
+			entity:addCollision(collision.other)
+			collision.other:addCollision(entity)
 		end
 
 		entity.x, entity.y = self.bumpWorld:getRect(entity)
 
 		::continue::
+	end
+
+	for _, entity in ipairs(self.entities) do
+		entity:processCollisions(dt)
 	end
 	
 	self.camera:update(dt)

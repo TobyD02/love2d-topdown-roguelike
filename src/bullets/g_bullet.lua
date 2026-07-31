@@ -10,6 +10,7 @@ local Helpers = require("src.helpers")
 ---@field range number
 ---@field startX number
 ---@field startY number
+---@field damage number
 local GBullet = {}
 GBullet.__index = GBullet
 
@@ -24,14 +25,17 @@ setmetatable(GBullet, { __index = GKinematicEntity })
 ---@param dirX number
 ---@param dirY number
 ---@param range number
+---@param color table<number, number, number>|nil
 ---@return TBullet
-function GBullet:new(owner, x, y, dirX, dirY, range)
+function GBullet:new(owner, x, y, dirX, dirY, range, color)
 	---@type GBullet
-	local obj = GKinematicEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE)
+	local obj = GKinematicEntity.new(self, x, y, Constants.BULLET_SIZE, Constants.BULLET_SIZE, color)
 	obj:addTag(Tags.BULLET)
 
 	obj.startX = x
 	obj.startY = y
+
+	obj.damage = 20
 
 	obj.maxSpeed = 1000
 	obj.owner = owner
@@ -62,11 +66,12 @@ end
 ---@param dirX number
 ---@param dirY number
 ---@param range number
-function GBullet:newFromOrigin(owner, originX, originY, dirX, dirY, range)
+---@param color table<number, number, number>|nil
+function GBullet:newFromOrigin(owner, originX, originY, dirX, dirY, range, color)
 	local x = originX - Constants.BULLET_SIZE / 2
 	local y = originY - Constants.BULLET_SIZE / 2
 
-	local obj = GBullet.new(self, owner, x, y, dirX, dirY, range)
+	local obj = GBullet.new(self, owner, x, y, dirX, dirY, range, color)
 	return obj
 end
 
@@ -104,6 +109,12 @@ function GBullet:draw()
 	love.graphics.setColor(self.color)
 	local oX, oY = self:getOrigin()
 	love.graphics.circle("fill", oX, oY, self.width / 2)
+end
+
+---@param self GBullet
+---@return number
+function GBullet:getDamage()
+	return self.damage
 end
 
 return GBullet

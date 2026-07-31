@@ -1,5 +1,5 @@
 local Tags = require("src.tags")
-local Helpers = require("src.helpers")
+local Constants = require("src.constants")
 
 ---@class GPhysicsObject
 ---@field tags table<string, boolean>
@@ -8,6 +8,7 @@ local Helpers = require("src.helpers")
 ---@field width number
 ---@field height number
 ---@field color table<number, number, number>
+---@field frameCollisions table<GPhysicsObject, boolean>
 local GPhysicsObject = {}
 GPhysicsObject.__index = GPhysicsObject
 
@@ -39,6 +40,7 @@ function GPhysicsObject:new(x, y, width, height, color)
 		width = width,
 		height = height,
 		color = color,
+		frameCollisions = {},
 	}
 
 	setmetatable(obj, self)
@@ -78,6 +80,45 @@ function GPhysicsObject:addTag(tag)
 		error("Cannot add nil tag")
 	end
 	self.tags[tag] = true
+end
+
+---@param self GPhysicsObject
+---@param other GPhysicsObject
+function GPhysicsObject:addCollision(other)
+	self.frameCollisions[other] = true
+end
+
+---@param self GPhysicsObject
+---@param other GPhysicsObject
+---@return string
+--- Accepts GPhysicsObject other, and returns one of:
+---		- Constants.FILTER_SLIDE = Collide and move other
+---		- Constants.FILTER_TOUCH = Collide but dont move other
+---		- Constants.FILTER_CROSS = Pass through
+function GPhysicsObject:filter(other)
+	return Constants.FILTER_TOUCH
+end
+
+---@param self GPhysicsObject
+---@param world GWorld
+function GPhysicsObject:setWorld(world)
+	self.world = world
+end
+
+---@param self GPhysicsObject
+---@param dt number
+function GPhysicsObject:processCollisions(dt)
+	-- Do nothing
+	for other, _ in pairs(self.frameCollisions) do
+		self:onCollision(other)
+		self.frameCollisions[other] = nil
+	end
+end
+
+---@param self GPhysicsObject
+---@param other GPhysicsObject
+function GPhysicsObject:onCollision(other)
+	--- Do nothing
 end
 
 return GPhysicsObject

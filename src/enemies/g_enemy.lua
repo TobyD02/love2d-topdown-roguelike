@@ -147,6 +147,23 @@ function GEnemy:onCollision(other)
 
 		self.separationX, self.separationY = Helpers:normalize(sepX, sepY)
 	end
+
+	if other:hasTag(Tags.BULLET) then
+		---@type GBullet
+		local b = other
+		if b.owner:hasTag(Tags.PLAYER) then
+			self:takeDamage(b:getDamage())
+		end
+	end
+end
+
+---@param self GEnemy
+---@param damage number
+function GEnemy:takeDamage(damage)
+	self.health = self.health - damage
+	if self.health <= 0 then
+		self.world:removeEntity(self)
+	end
 end
 
 ---@param self GEnemy

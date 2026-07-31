@@ -19,6 +19,7 @@ setmetatable(GEnemySpitter, { __index = GEnemy })
 function GEnemySpitter:new(x, y)
 	local obj = GEnemy.new(self, x, y)
 	obj.shooter = GShooterSpitter:new(obj)
+	obj.shooter.bulletColor = { 1, 0.3, 0.3 }
 	obj.moveAwayRange = 100
 	return obj
 end
@@ -39,7 +40,6 @@ function GEnemySpitter:think(dt)
 		then
 			local oX, oY = self:getOrigin()
 			self.shooter:shoot(oX, oY, dirX, dirY)
-			print(self, "shot")
 		elseif self.distanceFromTargetSquared < self.moveAwayRange * self.moveAwayRange then
 			self.velocityX = self.velocityX + (-self.moveDirX + self.separationX) * self.accel * dt
 			self.velocityY = self.velocityY + (-self.moveDirY + self.separationY) * self.accel * dt

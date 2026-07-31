@@ -54,10 +54,6 @@ end
 ---@param self GEntity
 ---@param other GPhysicsObject
 ---@return string
---- Accepts GPhysicsObject other, and returns one of:
----		- Constants.FILTER_SLIDE = Collide and move other
----		- Constants.FILTER_TOUCH = Collide but dont move other
----		- Constants.FILTER_CROSS = Pass through
 function GEntity:filter(other)
 	return Constants.FILTER_SLIDE
 end
@@ -90,18 +86,6 @@ end
 ---@param self GEntity
 function GEntity:draw()
 	GPhysicsObject.draw(self) -- Call parent draw
-end
-
----@param self GEntity
----@param other GPhysicsObject
-function GEntity:onCollision(other)
-	-- Do nothing
-end
-
----@param self GEntity
----@param world GWorld
-function GEntity:setWorld(world)
-	self.world = world
 end
 
 return GEntity

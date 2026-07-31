@@ -9,6 +9,7 @@ local GTimer = require("src.core.g_timer")
 ---@field range number
 ---@field shootStartX number
 ---@field shootStartY number
+---@field bulletColor table<number, number, number>|nil
 local GShooter = {
 	range = 1000,
 }
@@ -17,8 +18,9 @@ GShooter.__index = GShooter
 ---@generic TShooter
 ---@param owner GEntity
 ---@param bulletClass GBullet|nil
+---@param bulletColor table<number, number, number>|nil
 ---@return TShooter
-function GShooter:new(owner, bulletClass)
+function GShooter:new(owner, bulletClass, bulletColor)
 	if bulletClass == nil then
 		bulletClass = require("src.bullets.g_bullet")
 	end
@@ -26,6 +28,7 @@ function GShooter:new(owner, bulletClass)
 	local obj = {
 		owner = owner,
 		bulletClass = bulletClass,
+		bulletColor = bulletColor,
 		canShoot = true,
 		shootTimer = GTimer:new(math.random() + 0.5),
 		shootStartX = owner.x,
@@ -44,7 +47,15 @@ end
 function GShooter:shoot(originX, originY, directionX, directionY)
 	if self.canShoot then
 		self.world:addEntity(
-			self.bulletClass:newFromOrigin(self.owner, originX, originY, directionX, directionY, self.range)
+			self.bulletClass:newFromOrigin(
+				self.owner,
+				originX,
+				originY,
+				directionX,
+				directionY,
+				self.range,
+				self.bulletColor
+			)
 		)
 		self.canShoot = false
 	end

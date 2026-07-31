@@ -22,7 +22,7 @@ function GShooterSpitter:new(owner)
 	local obj = GShooter.new(self, owner, bulletClass)
 
 	obj.spread = 10
-	obj.shootTimer = GTimer:new(1 + math.random() * 2)
+	obj.shootTimer = GTimer:new(2 + math.random() * 3)
 	setmetatable(obj, self)
 	return obj
 end
@@ -36,7 +36,9 @@ function GShooterSpitter:shoot(originX, originY, directionX, directionY)
 	if self.canShoot then
 		for _, angle in ipairs({ -self.spread, 0, self.spread }) do
 			local dirX, dirY = Helpers:rotateVecByAngleDegrees(directionX, directionY, angle)
-			self.world:addEntity(self.bulletClass:newFromOrigin(self.owner, originX, originY, dirX, dirY, self.range))
+			self.world:addEntity(
+				self.bulletClass:newFromOrigin(self.owner, originX, originY, dirX, dirY, self.range, self.bulletColor)
+			)
 		end
 		self.canShoot = false
 	end

@@ -100,11 +100,23 @@ end
 ---@param self GPlayer
 ---@param other GPhysicsObject
 function GPlayer:onCollision(other)
-	if other:hasTag(Tags.ENEMY) then
-		return Constants.FILTER_TOUCH
+	if other:hasTag(Tags.BULLET) then
+		---@type GBullet
+		local b = other
+		if b.owner:hasTag(Tags.ENEMY) then
+			self:takeDamage(b:getDamage())
+		end
 	end
+end
 
-	return Constants.FILTER_SLIDE
+---@param self GPlayer
+---@param damage number
+function GPlayer:takeDamage(damage)
+	self.health = self.health - damage
+	if self.health <= 0 then
+		self.world:removeEntity(self)
+	end
+	print("Player has " .. self.health .. "hp")
 end
 
 ---@param self GPlayer
