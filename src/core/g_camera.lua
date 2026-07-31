@@ -8,10 +8,12 @@ local GCamera = {}
 GCamera.__index = GCamera
 
 ---@param self GCamera
+---@param worldWidth number
+---@param worldHeight number
 ---@param target GEntity|nil
-function GCamera:new(target)
+function GCamera:new(worldWidth, worldHeight, target)
 	local obj = {
-		gamera = gamera.new(0, 0, Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT),
+		gamera = gamera.new(0, 0, worldWidth, worldHeight),
 		target = target,
 	}
 

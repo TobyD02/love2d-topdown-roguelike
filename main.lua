@@ -7,7 +7,7 @@ local GSpriteSheet = require("src.core.g_sprite_sheet")
 local GSpriteSheetAnimation = require("src.core.g_sprite_sheet_animation")
 
 ---@type GWorld
-local world = GWorld:new(64, 24, 24)
+local world = GWorld:new(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, 24, 24)
 
 ---@type GSpriteSheet
 local spriteSheet

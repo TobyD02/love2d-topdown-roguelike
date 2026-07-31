@@ -42,7 +42,7 @@ function GWorld:new(width, height, cellSize)
 		entityTagsMap = entityTagsMap,
 		entityTagIndexMap = entityTagIndexMap,
 		bumpWorld = require("lib.bump.bump").newWorld(cellSize),
-		camera = GCamera:new(),
+		camera = GCamera:new(width, height),
 		lastEntityIndexProcessed = 1
 	}
 
