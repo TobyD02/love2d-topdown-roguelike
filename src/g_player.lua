@@ -3,6 +3,7 @@ local Constants = require("src.constants")
 local GShooter = require("src.shooters.g_shooter")
 local Tags = require("src.tags")
 local Helpers = require("src.helpers")
+local GDebug = require("src.core.g_debug")
 
 ---@class GPlayer : GKinematicEntity
 ---@field health number
@@ -36,7 +37,7 @@ function GPlayer:new(x, y, shooter)
 	obj.velocityX, obj.velocityY = 0, 0
 
 	if shooter == nil then
-		shooter = GShooter:new(obj, nil, self.color)
+		shooter = GShooter:new(obj, nil, obj.color)
 	end
 
 	obj.shooter = shooter
@@ -116,7 +117,12 @@ function GPlayer:takeDamage(damage)
 	if self.health <= 0 then
 		self.world:removeEntity(self)
 	end
-	print("Player has " .. self.health .. "hp")
+
+	GDebug:log("Player HP: " .. self.health)
+
+	if self.health <= 0 then
+		GDebug:log("Player Died")
+	end
 end
 
 ---@param self GPlayer

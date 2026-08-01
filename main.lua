@@ -6,15 +6,21 @@ local Constants = require("src.constants")
 local GSpriteSheet = require("src.core.g_sprite_sheet")
 local GSpriteSheetAnimation = require("src.core.g_sprite_sheet_animation")
 
+local GDebug = require("src.core.g_debug")
+
 ---@type GWorld
 local world = GWorld:new(Constants.WORLD_WIDTH, Constants.WORLD_HEIGHT, 24, 24)
 
 ---@type GSpriteSheet
 local spriteSheet
 
-function love.load()
+function love.load(args)
 	love.window.setMode(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
 	love.graphics.setDefaultFilter("nearest", "nearest", 0) -- Set filter to nearest neighbors
+
+	if Constants.DEBUG then
+		GDebug:initialise(args)
+	end
 
 	spriteSheet = GSpriteSheet:new("Dungeon_Character_2.png", 16, 15, 0, 1)
 	spriteSheet:addAnimation(GSpriteSheetAnimation:new("idle", 1, { 1, 2 }))
@@ -52,6 +58,10 @@ function love.update(dt)
 	world:update(dt)
 	spriteSheet:update(dt)
 
+	if Constants.DEBUG then
+		GDebug:update(dt)
+	end
+
 	flashTimer = flashTimer + dt
 	if flashTimer >= 2 then
 		spriteSheet:flash({ 1, 0, 0 }, 0.2)
@@ -63,4 +73,7 @@ function love.draw()
 	love.graphics.clear(0.12, 0.12, 0.12)
 	world:draw()
 	spriteSheet:draw(100, 100, 0, 5)
+	if Constants.DEBUG then
+		GDebug:draw()
+	end
 end
